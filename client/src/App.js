@@ -4,6 +4,9 @@ import Footer from "./Components/Footer";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
+import Dashboard from "./Pages/Dashboard";
+import Upload from "./Pages/Upload";
+import Learn from "./Pages/Learn";
 
 
 
@@ -11,6 +14,16 @@ const Layout = () =>{
   return (
     <>
       {/* <Navbar/> */}
+      <Outlet/>
+      {/* <Footer/> */}
+    </>
+  )
+}
+
+const LayoutWithNavbar = () =>{
+  return (
+    <>
+      <Navbar/>
       <Outlet/>
       {/* <Footer/> */}
     </>
@@ -25,6 +38,30 @@ const router = createBrowserRouter([
       {
         path:"/",
         element:<Home/>
+      },
+      {
+        path:"/dashboard",
+        element:(
+          <LayoutWithNavbar>
+            <Dashboard/>
+          </LayoutWithNavbar>
+        )
+      },
+      {
+        path:"/upload",
+        element:(
+          <LayoutWithNavbar>
+            <Upload/>
+          </LayoutWithNavbar>
+        )
+      },
+      {
+        path:"/learn",
+        element:(
+          <LayoutWithNavbar>
+            <Learn/>
+          </LayoutWithNavbar>
+        )
       }
     ]
   },
