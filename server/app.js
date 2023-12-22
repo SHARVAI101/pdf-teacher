@@ -25,7 +25,9 @@ app.post("/transcript", async (req, res) =>{
     for await (const chunk of stream) {
         console.log(chunk.choices[0]?.delta?.content || "");
     }
-    resturn }
+    return  {
+        "Test":"Testing the text API..."
+    }
 });
 
 app.post("/creat-new/project/explain",async (req,res)=>{
