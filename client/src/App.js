@@ -20,16 +20,6 @@ const Layout = () =>{
   )
 }
 
-const LayoutWithNavbar = () =>{
-  return (
-    <>
-      <Navbar/>
-      <Outlet/>
-      {/* <Footer/> */}
-    </>
-  )
-}
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,27 +31,15 @@ const router = createBrowserRouter([
       },
       {
         path:"/dashboard",
-        element:(
-          <LayoutWithNavbar>
-            <Dashboard/>
-          </LayoutWithNavbar>
-        )
+        element:<Dashboard/>
       },
       {
         path:"/upload",
-        element:(
-          <LayoutWithNavbar>
-            <Upload/>
-          </LayoutWithNavbar>
-        )
+        element:<Upload/>
       },
       {
         path:"/learn",
-        element:(
-          <LayoutWithNavbar>
-            <Learn/>
-          </LayoutWithNavbar>
-        )
+        element:<Learn/>
       }
     ]
   },

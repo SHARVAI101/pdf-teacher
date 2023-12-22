@@ -1,8 +1,12 @@
 import React from 'react'
+import Navbar from '../Components/Navbar'
 
 function Upload() {
   return (
-    <div>Upload</div>
+    <div>
+        <Navbar />
+        uplaod
+    </div>
   )
 }
 
