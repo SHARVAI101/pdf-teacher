@@ -10,9 +10,9 @@ import Home from "./Pages/Home";
 const Layout = () =>{
   return (
     <>
-      <Navbar/>
+      {/* <Navbar/> */}
       <Outlet/>
-      <Footer/>
+      {/* <Footer/> */}
     </>
   )
 }
