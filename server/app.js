@@ -1,20 +1,13 @@
 const OpenAI = require('openai');
 var express = require("express");
 require('dotenv').config();
-<<<<<<< Updated upstream
 const cors = require('cors');
-
-=======
 const PDFParser = require('pdf-parse');
 const fs = require('fs');
 const uploadDirectory = './uploads';
 const multer = require('multer');
-const path = require('path');
-const mammoth = require('mammoth');
-const pdf = require('html-pdf');
->>>>>>> Stashed changes
-var app = express();
 
+var app = express();
 app.use(cors());
 
 const openai = new OpenAI({
@@ -47,6 +40,70 @@ app.post("/transcript", async (req, res) =>{
     res.send({"message":completion.choices[0].message.content})
 });
 
-app.post("/creat-new/project/explain",async (req,res)=>{
-    console.log("")
+app.post("/creat-new/project/explain",upload.single('file'),async (req,res)=>{
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const uploadedFile = req.file;
+
+        const fileName = `${uploadedFile.originalname}`;
+        const filePath = `${uploadDirectory}/${fileName}`;
+        const fileData = fs.readFileSync(filePath, 'utf8');
+        await processFileData(fileData);
+
+        const fileExtension = uploadedFile.mimetype ?uploadedFile.mimetype : null;
+
+        if (fileExtension === 'application/pdf') {
+            var prompt = await processPDF(filePath, res);
+            res.send({"prompt":prompt});
+        } else {
+            console.log("The is not PDF file")
+        }
+    } catch (error) {
+         console.error('An error occurred while processing the file:', error);
+         res.status(500).json({ error: 'Failed to process the file' });
+    }
 })
+
+async function processPDF(pdfFilePath, res) {
+    try {
+        const pdfBuffer = fs.readFileSync(pdfFilePath);
+        PDFParser(pdfBuffer).then((data) => {
+            var allPagesData = [];
+
+            // Number of pages
+            console.log(data.numpages);
+            
+            // Process each page
+            let pageProcessingPromises = [];
+            for (let i = 0; i < data.numpages; i++) {
+                let promise = PDFParser(pdfBuffer, {max: i + 1, min: i})
+                    .then(function(pageData) {
+                        let pageNumber = 'Page Number_' + (i + 1);
+                        allPagesData.push({ [pageNumber]: pageData.text });
+                    });
+                pageProcessingPromises.push(promise);
+            }
+
+            // After all pages have been processed
+            Promise.all(pageProcessingPromises).then(() => {
+                console.log(allPagesData);
+            });
+        });
+    } catch (error) {
+          console.error('An error occurred while processing the PDF:', error);
+          res.status(500).json({ error: 'Failed to process the PDF' });
+    }
+}
+
+function processFileData(fileData) {
+    fs.writeFile('output.txt', fileData, (err) => {
+          if (err) {
+              console.error('Error writing file:', err);
+          } else {
+              console.log('File written successfully');
+          }
+        });
+  }
