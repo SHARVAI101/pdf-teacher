@@ -4,7 +4,7 @@ var express = require("express");
 var app = express();
 
 const openai = new OpenAI({
-    apiKey: "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"
+    apiKey: process.env.API_TOKEN
 });
 
 app.get("/", function (req, res) {
@@ -16,18 +16,12 @@ app.listen(8000, function () {
 });
 
 app.post("/transcript", async (req, res) =>{
-    const stream = await openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
         model: "gpt-4",
-        messages: [{ role: "user", content: "Say this is a test" }],
-        stream: true,
+        messages: [{ role: "system", content: "You are a helpful assistant." }],
     });
 
-    for await (const chunk of stream) {
-        console.log(chunk.choices[0]?.delta?.content || "");
-    }
-    return  {
-        "Test":"Testing the text API..."
-    }
+    res.send(completion.choices[1].message.content)
 });
 
 app.post("/creat-new/project/explain",async (req,res)=>{
