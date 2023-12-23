@@ -1,8 +1,18 @@
 const OpenAI = require('openai');
 var express = require("express");
 require('dotenv').config();
+<<<<<<< Updated upstream
 const cors = require('cors');
 
+=======
+const PDFParser = require('pdf-parse');
+const fs = require('fs');
+const uploadDirectory = './uploads';
+const multer = require('multer');
+const path = require('path');
+const mammoth = require('mammoth');
+const pdf = require('html-pdf');
+>>>>>>> Stashed changes
 var app = express();
 
 app.use(cors());
@@ -11,13 +21,22 @@ const openai = new OpenAI({
     apiKey: process.env.API_TOKEN
 });
 
-app.get("/", function (req, res) {
-    res.send(" Welcome Node js ");
-});  
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.listen(8000, function () {
     console.log("Node server is runing on port 8000...");
 });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+       cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+       cb(null, file.originalname);
+    }
+});
+const upload = multer({ storage });
 
 app.post("/transcript", async (req, res) =>{
     const completion = await openai.chat.completions.create({
