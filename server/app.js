@@ -71,8 +71,8 @@ async function processPDF(pdfFilePath, res) {
     try {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
         PDFParser(pdfBuffer).then((data) => {
-            var allPagesData = [];
-
+            var allPagesData = []; // Use this array to store data of all pages
+    
             // Number of pages
             console.log(data.numpages);
             
@@ -86,11 +86,12 @@ async function processPDF(pdfFilePath, res) {
                     });
                 pageProcessingPromises.push(promise);
             }
-
+    
             // After all pages have been processed
             Promise.all(pageProcessingPromises).then(() => {
-                console.log(allPagesData);
+                res.send(allPagesData);
             });
+    
         });
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
