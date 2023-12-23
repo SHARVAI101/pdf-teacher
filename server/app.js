@@ -1,7 +1,5 @@
 const OpenAI = require('openai');
 var express = require("express");
-require('dotenv').config();
-
 
 var app = express();
 
