@@ -25,7 +25,7 @@ app.post("/transcript", async (req, res) =>{
         messages: [{ role: "system", content: "You are a helpful assistant." }],
     });
 
-    res.send({"Message":completion.choices[0].message.content})
+    res.send({"message":completion.choices[0].message.content})
 });
 
 app.post("/creat-new/project/explain",async (req,res)=>{
