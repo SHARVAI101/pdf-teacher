@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Navbar from '../Components/Navbar'
 import axios from 'axios';
+import Loading from '../Components/Loading';
 
 function Upload() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,8 +16,11 @@ function Upload() {
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevents the default form submission behavior
+    setIsLoading(true);
+    
     const formData = new FormData(event.target); // Creates a FormData object to handle form data
     const uploadedFile = formData.get('file');
+    console.log(formData.get('name'));
     console.log(uploadedFile);
     console.log(name);
     try {
@@ -66,12 +70,13 @@ function Upload() {
               onChange={(e) => setPassword(e.target.value)}
           /> */}
           { isError && <p className="text-red-500">{ errorMessage }</p>}
-          <button 
+          { isLoading && <p className="w-full mt-4"><Loading /></p> }
+          { !isLoading && <button 
             type="submit" 
             className="mt-6 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
           >
             Create Project
-          </button>
+          </button>}
         </form>
       </div>
     </div>
