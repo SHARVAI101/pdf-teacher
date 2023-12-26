@@ -14,7 +14,7 @@ const openai = new OpenAI({
     apiKey: process.env.API_TOKEN
 });
 
-console.log(process.env.FIREBASE_TOKEN);
+// console.log(process.env.FIREBASE_API_KEY);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
