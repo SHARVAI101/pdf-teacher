@@ -33,14 +33,36 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-app.post("/transcript", async (req, res) =>{
+async function OpenAPIprompt (prompt) {
     const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: "You are a helpful assistant." }],
+        messages: [{ role: "system", content: prompt }],
     });
 
-    res.send({"message":completion.choices[0].message.content})
-});
+    return({"AIgenerated":completion.choices[0].message.content, "prompt":prompt})
+};
+
+async function processPDF(pdfFilePath, res) {
+    try {
+        const pdfBuffer = fs.readFileSync(pdfFilePath);
+        const data = await PDFParser(pdfBuffer);
+        const pdfText = data.text;
+        return pdfText
+    } catch (error) {
+          console.error('An error occurred while processing the PDF:', error);
+          res.status(500).json({ error: 'Failed to process the PDF' });
+    }
+}
+
+function processFileData(fileData) {
+    fs.writeFile('output.txt', fileData, (err) => {
+          if (err) {
+              console.error('Error writing file:', err);
+          } else {
+              console.log('File written successfully');
+          }
+        });
+  }
 
 app.post("/explain", upload.single('file'), async (req,res)=>{
     try {
@@ -60,7 +82,7 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
 
         if (fileExtension === 'application/pdf') {
             var prompt = await processPDF(filePath, res);
-            res.send({"prompt":prompt});
+            res.send(await OpenAPIprompt(prompt));
         } else {
             console.log("The is not PDF file")
         }
@@ -69,45 +91,3 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
          res.status(500).json({ error: 'Failed to process the file' });
     }
 })
-
-async function processPDF(pdfFilePath, res) {
-    try {
-        const pdfBuffer = fs.readFileSync(pdfFilePath);
-        PDFParser(pdfBuffer).then((data) => {
-            var allPagesData = []; // Use this array to store data of all pages
-    
-            // Number of pages
-            console.log(data.numpages);
-            
-            // Process each page
-            let pageProcessingPromises = [];
-            for (let i = 0; i < data.numpages; i++) {
-                let promise = PDFParser(pdfBuffer, {max: i + 1, min: i})
-                    .then(function(pageData) {
-                        let pageNumber = 'Page Number_' + (i + 1);
-                        allPagesData.push({ [pageNumber]: pageData.text });
-                    });
-                pageProcessingPromises.push(promise);
-            }
-    
-            // After all pages have been processed
-            Promise.all(pageProcessingPromises).then(() => {
-                res.send(allPagesData);
-            });
-    
-        });
-    } catch (error) {
-          console.error('An error occurred while processing the PDF:', error);
-          res.status(500).json({ error: 'Failed to process the PDF' });
-    }
-}
-
-function processFileData(fileData) {
-    fs.writeFile('output.txt', fileData, (err) => {
-          if (err) {
-              console.error('Error writing file:', err);
-          } else {
-              console.log('File written successfully');
-          }
-        });
-  }
