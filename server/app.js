@@ -14,6 +14,8 @@ const openai = new OpenAI({
     apiKey: process.env.API_TOKEN
 });
 
+console.log(process.env.FIREBASE_TOKEN);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,11 +42,12 @@ app.post("/transcript", async (req, res) =>{
     res.send({"message":completion.choices[0].message.content})
 });
 
-app.post("/creat-new/project/explain",upload.single('file'),async (req,res)=>{
+app.post("/explain", upload.single('file'), async (req,res)=>{
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
+        console.log("file found");
 
         const uploadedFile = req.file;
 

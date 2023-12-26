@@ -24,15 +24,17 @@ function Upload() {
     console.log(uploadedFile);
     console.log(name);
     try {
-      const response = await axios.post('http://localhost:8000/transcript', formData, {
+      const response = await axios.post('http://localhost:8000/explain', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log(response.data); // Handle the response from the server
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     }
+    setIsLoading(false);
     // You can send formData to a server using fetch or axios
     // Example: fetch('/api/upload', { method: 'POST', body: formData });
   };
