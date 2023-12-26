@@ -87,4 +87,50 @@ app.post("/creat-new/project/explain",upload.single('file'),async (req,res)=>{
          console.error('An error occurred while processing the file:', error);
          res.status(500).json({ error: 'Failed to process the file' });
     }
+<<<<<<< HEAD
 })
+=======
+})
+
+async function processPDF(pdfFilePath, res) {
+    try {
+        const pdfBuffer = fs.readFileSync(pdfFilePath);
+        PDFParser(pdfBuffer).then((data) => {
+            var allPagesData = []; // Use this array to store data of all pages
+    
+            // Number of pages
+            console.log(data.numpages);
+            
+            // Process each page
+            let pageProcessingPromises = [];
+            for (let i = 0; i < data.numpages; i++) {
+                let promise = PDFParser(pdfBuffer, {max: i + 1, min: i})
+                    .then(function(pageData) {
+                        let pageNumber = 'Page Number_' + (i + 1);
+                        allPagesData.push({ [pageNumber]: pageData.text });
+                    });
+                pageProcessingPromises.push(promise);
+            }
+    
+            // After all pages have been processed
+            Promise.all(pageProcessingPromises).then(() => {
+                res.send(allPagesData);
+            });
+    
+        });
+    } catch (error) {
+          console.error('An error occurred while processing the PDF:', error);
+          res.status(500).json({ error: 'Failed to process the PDF' });
+    }
+}
+
+function processFileData(fileData) {
+    fs.writeFile('output.txt', fileData, (err) => {
+          if (err) {
+              console.error('Error writing file:', err);
+          } else {
+              console.log('File written successfully');
+          }
+        });
+  }
+>>>>>>> 2396c9aeb9bd22383d2c3fd3c2e7ddfea2466737
