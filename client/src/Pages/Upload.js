@@ -1,20 +1,19 @@
 import React, { useState } from 'react'
 import Navbar from '../Components/Navbar'
-import axios from 'axios';
+import api from '../axiosConfig';
 import Loading from '../Components/Loading';
+import { useNavigate } from 'react-router-dom';
 
 function Upload() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
-  // const [file, setFile] = useState(null);
-
-  // const handleFileChange = (event) => {
-  //   setFile(event.target.files[0]); // Update the file state
-  // };
+  const [audioFile, setAudioFile] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
+
     event.preventDefault(); // Prevents the default form submission behavior
     setIsLoading(true);
     
@@ -24,13 +23,14 @@ function Upload() {
     console.log(uploadedFile);
     console.log(name);
     try {
-      const response = await axios.post('http://localhost:8000/create_new_project', formData, {
+      const response = await api.post('/create_new_project', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log(response.data); // Handle the response from the server
-      
+      // const response = await api.get('/text-to-speech');
+        // navigate('/learn', { state: { audioFile: "file://E:/Projects/pdf-teacher/server/speech.mp3" } });
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -41,6 +41,7 @@ function Upload() {
 
   return (
     <div className='w-full h-screen flex flex-col'>
+
       <Navbar />
       <div className='flex-grow flex items-start md:items-center justify-center'>
         <form onSubmit={handleSubmit} className='rounded-lg shadow-lg p-4 md:mt-[-20%]' enctype="multipart/form-data">

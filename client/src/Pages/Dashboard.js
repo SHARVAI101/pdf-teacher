@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../Components/Navbar'
 import AddButton from '../Components/AddButton'
-import axios from 'axios';
+import api from '../axiosConfig';
 import Loading from '../Components/Loading';
 import PreviousProjectCard from '../Components/PreviousProjectCard';
 
@@ -11,7 +11,7 @@ function Dashboard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.post('http://localhost:8000/get_previous_projects')
+    api.post('/get_previous_projects')
     .then(response => {
       console.log(response.data.projects);
       setProjects(response.data.projects);

@@ -1,5 +1,6 @@
 const OpenAI = require('openai');
 var express = require("express");
+const path = require('path')
 require('dotenv').config();
 const cors = require('cors');
 const PDFParser = require('pdf-parse');
@@ -24,6 +25,7 @@ const firebaseConfig = {
 
 var app = express();
 app.use(cors());
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 const openai = new OpenAI({
     apiKey: process.env.API_TOKEN
@@ -157,3 +159,24 @@ app.post("/get_previous_projects", async (req,res)=>{
         res.status(500).json({ error: "Internal server error" });
     }
 })
+
+
+app.get("/text-to-speech", async (req, res) =>{
+    const speechFile = path.resolve("./speech.mp3");
+    try{
+        const mp3 = await openai.audio.speech.create({
+            model: "tts-1",
+            voice: "alloy",
+            input: "Today is a wonderful day to build something people love!",
+          });
+        console.log(speechFile);
+        const buffer = Buffer.from(await mp3.arrayBuffer());
+        await fs.promises.writeFile(speechFile, buffer);
+        res.json({ audioFile: speechFile });
+    }
+    catch{
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
+});
