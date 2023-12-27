@@ -8,7 +8,7 @@ const uploadDirectory = './uploads';
 const multer = require('multer');
 const { initializeApp } = require("firebase/app");
 // import { getAnalytics } from "firebase/analytics";
-const { getFirestore, doc, updateDoc, arrayUnion } = require("firebase/firestore");
+const { getFirestore, doc, updateDoc, getDoc, arrayUnion } = require("firebase/firestore");
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -82,7 +82,7 @@ function processFileData(fileData) {
         });
   }
 
-app.post("/explain", upload.single('file'), async (req,res)=>{
+app.post("/create_new_project", upload.single('file'), async (req,res)=>{
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -132,3 +132,28 @@ async function updateUserData(openAIresponse, fileName, filePath, projectName) {
         projects: arrayUnion(newProject)
     });
 }
+
+app.post("/get_previous_projects", async (req,res)=>{
+    try {
+        // Reference to the user document
+        const docRef = doc(db, "user_data", "1");
+
+        // Get the document
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            // Extract the projects array
+            const userData = docSnap.data();
+            const projects = userData.projects || [];
+
+            // Send the projects array in the response
+            res.json({ projects });
+        } else {
+            // Document not found
+            res.status(404).json({ error: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
