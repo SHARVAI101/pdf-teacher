@@ -20,8 +20,8 @@ const Learn = () => {
     })
     .then(response => {
       setProject(response.data);
-      console.log(project);
       setIsLoading(false);
+      console.log(project);
     })
     .catch(error => {
       console.error("Error fetching data:", error);
@@ -29,21 +29,28 @@ const Learn = () => {
   }, []);
 
   return (
-    <div>
+    <div className='flex flex-col w-full h-screen'>
       <Navbar />
-      { isLoading && <Loading /> }
-      { !isLoading && 
-        <div className='px-4 lg:px-20 pt-5'>
-          <div className='grid grid-cols-3 gap-4'>
-            <div className='col-span-2 shadow-lg rounded-lg'>
-              hi
-            </div>
-            <div className='col-span-1 shadow-lg rounded-lg p-2'>
-              <audio src={project.audioFilePath} controls></audio>
+      <div className='flex-grow overflow-auto'>
+        { isLoading && <Loading /> }
+        { !isLoading && 
+          <div className='px-4 lg:px-20 py-5 h-full'>
+            <div className='grid grid-cols-3 gap-4 h-full'>
+              <div className='col-span-2 shadow-lg rounded-lg p-4'>
+                hi
+              </div>
+              <div className='col-span-1 shadow-lg rounded-lg p-4 flex flex-col min-h-0'>
+                <div className='flex-grow overflow-auto'>
+                  <p>{project.explanation}</p>
+                </div>
+                <div>
+                  <audio src={project.audioFilePath} controls></audio>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      }
+        }
+      </div>      
     </div>
   );
 };

@@ -5,7 +5,6 @@ require('dotenv').config();
 const cors = require('cors');
 const PDFParser = require('pdf-parse');
 const fs = require('fs');
-const uploadDirectory = './uploads';
 const multer = require('multer');
 const bodyParser = require('body-parser');
 
@@ -48,7 +47,7 @@ app.listen(8000, function () {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-       cb(null, 'uploads/');
+       cb(null, 'public/uploads/');
     },
     filename: (req, file, cb) => {
        cb(null, file.originalname);
@@ -98,7 +97,12 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
         const projectName = req.body.name;
 
         const fileName = `${uploadedFile.originalname}`;
-        const filePath = `${uploadDirectory}/${fileName}`;
+        // const uploadDirectory = './uploads';
+        const uploadDirectory = path.join(__dirname, 'public', 'uploads');
+        // const filePath = `${uploadDirectory}/${fileName}`;
+        const filePath = path.join(uploadDirectory, fileName);
+        // const filePath = path.resolve(__dirname, 'public', 'uploads', fileName);
+        console.log(filePath);
         const fileData = fs.readFileSync(filePath, 'utf8');
         await processFileData(fileData);
 
@@ -117,7 +121,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
             console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath, projectID);
+            updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID);
             res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
@@ -129,7 +133,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath, projectID) {
+async function updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -139,7 +143,7 @@ async function updateUserData(openAIresponse, fileName, filePath, projectName, a
         projectName: projectName,
         explanation: openAIresponse,
         fileName: fileName,
-        filePath: filePath,
+        filePath: "http://localhost:8000/static/uploads/"+fileName,
         audioFilePath: audioFilePath
     };
 
