@@ -90,6 +90,7 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
         console.log("file found");
 
         const uploadedFile = req.file;
+        const projectName = req.body.name;
 
         const fileName = `${uploadedFile.originalname}`;
         const filePath = `${uploadDirectory}/${fileName}`;
@@ -101,7 +102,8 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
         if (fileExtension === 'application/pdf') {
             var prompt = await processPDF(filePath, res);
             var openAIresponse = await OpenAPIprompt(prompt);
-            updateUserData(openAIresponse, fileName, filePath);
+            
+            updateUserData(openAIresponse, fileName, filePath, projectName);
             res.send("done");
         } else {
             console.log("The is not PDF file")
@@ -113,12 +115,13 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, filePath) {
+async function updateUserData(openAIresponse, fileName, filePath, projectName) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
     // New map (object) to add to the projects array
     const newProject = {
+        projectName: projectName,
         explanation: openAIresponse,
         fileName: fileName,
         filePath: filePath

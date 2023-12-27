@@ -49,6 +49,7 @@ function Upload() {
           <label for="name" class="mt-2 inline-block text-neutral-700 dark:text-neutral-200">Project Name</label>
           <input 
             type="text"
+            name="name"
             id="name"
             placeholder="Project name"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline my-2"
