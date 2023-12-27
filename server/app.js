@@ -102,17 +102,20 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
         const fileExtension = uploadedFile.mimetype ?uploadedFile.mimetype : null;
 
         if (fileExtension === 'application/pdf') {
+            // generate projectID
+            var projectID = generateProjectID();
+
             // create prompt for explanation and get response from GPT
             var prompt = await processPDF(filePath, res);
             var openAIresponse = await OpenAPIprompt(prompt);
 
             // generate text to speech audio file
-            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse);
+            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse, projectID);
             console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath);
-            res.send("done");
+            updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath, projectID);
+            res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
         }
@@ -123,12 +126,13 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath) {
+async function updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath, projectID) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
     // New map (object) to add to the projects array
     const newProject = {
+        projectID: projectID,
         projectName: projectName,
         explanation: openAIresponse,
         fileName: fileName,
@@ -167,8 +171,8 @@ app.post("/get_previous_projects", async (req,res)=>{
     }
 });
 
-async function textToSpeech(text) {
-    var filename = generateFilename()+".mp3";
+async function textToSpeech(text, projectID) {
+    var filename = projectID + ".mp3";
     const speechFile = path.resolve(__dirname, 'public', 'audio', filename);
     try{
         const mp3 = await openai.audio.speech.create({
@@ -188,7 +192,7 @@ async function textToSpeech(text) {
     }
 }
 
-function generateFilename() {
+function generateProjectID() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < 7; i++) {

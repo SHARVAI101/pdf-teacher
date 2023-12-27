@@ -9,7 +9,6 @@ function Upload() {
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
-  const [audioFile, setAudioFile] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -30,13 +29,11 @@ function Upload() {
       });
       console.log(response.data); // Handle the response from the server
       // const response = await api.get('/text-to-speech');
-        // navigate('/learn', { state: { audioFile: "file://E:/Projects/pdf-teacher/server/speech.mp3" } });
+      navigate(`/learn?projectID=${response.data.projectID}`);
     } catch (error) {
       console.error('Error submitting form:', error);
     }
     setIsLoading(false);
-    // You can send formData to a server using fetch or axios
-    // Example: fetch('/api/upload', { method: 'POST', body: formData });
   };
 
   return (
@@ -65,14 +62,7 @@ function Upload() {
             type="file"
             name="file"
             id="file"  />
-          {/* <input 
-              type="password"
-              placeholder="Password"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline my-2"
-              value={password}
-              required
-              onChange={(e) => setPassword(e.target.value)}
-          /> */}
+        
           { isError && <p className="text-red-500">{ errorMessage }</p>}
           { isLoading && <p className="w-full mt-4"><Loading /></p> }
           { !isLoading && <button 

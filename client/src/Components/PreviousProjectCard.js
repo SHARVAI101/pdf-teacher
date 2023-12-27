@@ -1,11 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function PreviousProjectCard({ project }) {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    navigate(`/learn?projectID=${project.projectID}`);
+  };
+
   return (
-    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 cursor-pointer">
-        <a href="#">
-            <img class="rounded-t-lg" src="https://tappedouttravellers.com/wp-content/uploads/2017/12/pexels-photo-297755-1-scaled.jpeg" alt="" />
-        </a>
+    <div onClick={handleClick} class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 cursor-pointer">
+        <img class="rounded-t-lg" src="https://tappedouttravellers.com/wp-content/uploads/2017/12/pexels-photo-297755-1-scaled.jpeg" alt="" />
         <div class="p-5">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{ project.projectName }</h5>
             {/* <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
@@ -17,7 +22,6 @@ function PreviousProjectCard({ project }) {
             </a>
         </div>
     </div>
-
   )
 }
 
