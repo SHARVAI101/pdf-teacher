@@ -102,10 +102,16 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
         const fileExtension = uploadedFile.mimetype ?uploadedFile.mimetype : null;
 
         if (fileExtension === 'application/pdf') {
+            // create prompt for explanation and get response from GPT
             var prompt = await processPDF(filePath, res);
             var openAIresponse = await OpenAPIprompt(prompt);
+
+            // generate text to speech audio file
+            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse);
+            console.log(audioFilePath);
             
-            updateUserData(openAIresponse, fileName, filePath, projectName);
+            // update the firebase db
+            updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath);
             res.send("done");
         } else {
             console.log("The is not PDF file")
@@ -117,7 +123,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, filePath, projectName) {
+async function updateUserData(openAIresponse, fileName, filePath, projectName, audioFilePath) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -126,7 +132,8 @@ async function updateUserData(openAIresponse, fileName, filePath, projectName) {
         projectName: projectName,
         explanation: openAIresponse,
         fileName: fileName,
-        filePath: filePath
+        filePath: filePath,
+        audioFilePath: audioFilePath
     };
 
     // Update the document
@@ -158,25 +165,34 @@ app.post("/get_previous_projects", async (req,res)=>{
         console.error("Error fetching user data:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-})
+});
 
-
-app.get("/text-to-speech", async (req, res) =>{
-    const speechFile = path.resolve("./speech.mp3");
+async function textToSpeech(text) {
+    var filename = generateFilename()+".mp3";
+    const speechFile = path.resolve(__dirname, 'public', 'audio', filename);
     try{
         const mp3 = await openai.audio.speech.create({
             model: "tts-1",
             voice: "alloy",
             input: "Today is a wonderful day to build something people love!",
           });
-        console.log(speechFile);
+        // console.log(speechFile);
         const buffer = Buffer.from(await mp3.arrayBuffer());
         await fs.promises.writeFile(speechFile, buffer);
-        res.json({ audioFile: speechFile });
+        // res.json({ audioFile: speechFile });
+        return filename;
     }
     catch{
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-    
-});
+}
+
+function generateFilename() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 7; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
