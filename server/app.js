@@ -8,6 +8,7 @@ const uploadDirectory = './uploads';
 const multer = require('multer');
 const { initializeApp } = require("firebase/app");
 // import { getAnalytics } from "firebase/analytics";
+const { getFirestore, doc, updateDoc, arrayUnion } = require("firebase/firestore");
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -28,9 +29,10 @@ const openai = new OpenAI({
     apiKey: process.env.API_TOKEN
 });
 
-// console.log(process.env.FIREBASE_API_KEY);
+// Initializing firebase products
 const firebaseApp = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -55,7 +57,7 @@ async function OpenAPIprompt (prompt) {
         messages: [{ role: "system", content: prompt }],
     });
 
-    return({"AIgenerated":completion.choices[0].message.content, "prompt":prompt})
+    return(completion.choices[0].message.content)
 };
 
 async function processPDF(pdfFilePath, res) {
@@ -63,7 +65,7 @@ async function processPDF(pdfFilePath, res) {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
         const data = await PDFParser(pdfBuffer);
         const pdfText = data.text;
-        return pdfText
+        return "explain this in simpler terms: "+pdfText
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
           res.status(500).json({ error: 'Failed to process the PDF' });
@@ -98,7 +100,9 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
 
         if (fileExtension === 'application/pdf') {
             var prompt = await processPDF(filePath, res);
-            res.send(await OpenAPIprompt(prompt));
+            var openAIresponse = await OpenAPIprompt(prompt);
+            updateUserData(openAIresponse, fileName, filePath);
+            res.send("done");
         } else {
             console.log("The is not PDF file")
         }
@@ -107,3 +111,21 @@ app.post("/explain", upload.single('file'), async (req,res)=>{
          res.status(500).json({ error: 'Failed to process the file' });
     }
 })
+
+// Function to update the document
+async function updateUserData(openAIresponse, fileName, filePath) {
+    // Reference to the document
+    const docRef = doc(db, "user_data", "1");
+
+    // New map (object) to add to the projects array
+    const newProject = {
+        explanation: openAIresponse,
+        fileName: fileName,
+        filePath: filePath
+    };
+
+    // Update the document
+    await updateDoc(docRef, {
+        projects: arrayUnion(newProject)
+    });
+}
