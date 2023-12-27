@@ -7,6 +7,21 @@ const PDFParser = require('pdf-parse');
 const fs = require('fs');
 const uploadDirectory = './uploads';
 const multer = require('multer');
+const { initializeApp } = require("firebase/app");
+// import { getAnalytics } from "firebase/analytics";
+const { getFirestore, doc, updateDoc, getDoc, arrayUnion } = require("firebase/firestore");
+
+// Firebase Configuration
+const firebaseConfig = {
+    // Your Firebase configuration here
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+};
 
 var app = express();
 app.use(cors());
@@ -15,6 +30,11 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 const openai = new OpenAI({
     apiKey: process.env.API_TOKEN
 });
+
+// Initializing firebase products
+const firebaseApp = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -33,67 +53,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-app.post("/transcript", async (req, res) =>{
+async function OpenAPIprompt (prompt) {
     const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: "You are a helpful assistant." }],
+        messages: [{ role: "system", content: prompt }],
     });
 
-    res.send({"message":completion.choices[0].message.content})
-});
-
-app.post("/creat-new/project/explain",upload.single('file'),async (req,res)=>{
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-
-        const uploadedFile = req.file;
-
-        const fileName = `${uploadedFile.originalname}`;
-        const filePath = `${uploadDirectory}/${fileName}`;
-        const fileData = fs.readFileSync(filePath, 'utf8');
-        await processFileData(fileData);
-
-        const fileExtension = uploadedFile.mimetype ?uploadedFile.mimetype : null;
-
-        if (fileExtension === 'application/pdf') {
-            var prompt = await processPDF(filePath, res);
-            res.send({"prompt":prompt});
-        } else {
-            console.log("The is not PDF file")
-        }
-    } catch (error) {
-         console.error('An error occurred while processing the file:', error);
-         res.status(500).json({ error: 'Failed to process the file' });
-    }
-})
+    return(completion.choices[0].message.content)
+};
 
 async function processPDF(pdfFilePath, res) {
     try {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
-        PDFParser(pdfBuffer).then((data) => {
-            var allPagesData = [];
-
-            // Number of pages
-            console.log(data.numpages);
-            
-            // Process each page
-            let pageProcessingPromises = [];
-            for (let i = 0; i < data.numpages; i++) {
-                let promise = PDFParser(pdfBuffer, {max: i + 1, min: i})
-                    .then(function(pageData) {
-                        let pageNumber = 'Page Number_' + (i + 1);
-                        allPagesData.push({ [pageNumber]: pageData.text });
-                    });
-                pageProcessingPromises.push(promise);
-            }
-
-            // After all pages have been processed
-            Promise.all(pageProcessingPromises).then(() => {
-                console.log(allPagesData);
-            });
-        });
+        const data = await PDFParser(pdfBuffer);
+        const pdfText = data.text;
+        return "explain this in simpler terms: "+pdfText
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
           res.status(500).json({ error: 'Failed to process the PDF' });
@@ -110,8 +84,84 @@ function processFileData(fileData) {
         });
   }
 
+app.post("/create_new_project", upload.single('file'), async (req,res)=>{
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        console.log("file found");
 
-  app.get("/text-to-speech", async (req, res) =>{
+        const uploadedFile = req.file;
+        const projectName = req.body.name;
+
+        const fileName = `${uploadedFile.originalname}`;
+        const filePath = `${uploadDirectory}/${fileName}`;
+        const fileData = fs.readFileSync(filePath, 'utf8');
+        await processFileData(fileData);
+
+        const fileExtension = uploadedFile.mimetype ?uploadedFile.mimetype : null;
+
+        if (fileExtension === 'application/pdf') {
+            var prompt = await processPDF(filePath, res);
+            var openAIresponse = await OpenAPIprompt(prompt);
+            
+            updateUserData(openAIresponse, fileName, filePath, projectName);
+            res.send("done");
+        } else {
+            console.log("The is not PDF file")
+        }
+    } catch (error) {
+         console.error('An error occurred while processing the file:', error);
+         res.status(500).json({ error: 'Failed to process the file' });
+    }
+})
+
+// Function to update the document
+async function updateUserData(openAIresponse, fileName, filePath, projectName) {
+    // Reference to the document
+    const docRef = doc(db, "user_data", "1");
+
+    // New map (object) to add to the projects array
+    const newProject = {
+        projectName: projectName,
+        explanation: openAIresponse,
+        fileName: fileName,
+        filePath: filePath
+    };
+
+    // Update the document
+    await updateDoc(docRef, {
+        projects: arrayUnion(newProject)
+    });
+}
+
+app.post("/get_previous_projects", async (req,res)=>{
+    try {
+        // Reference to the user document
+        const docRef = doc(db, "user_data", "1");
+
+        // Get the document
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            // Extract the projects array
+            const userData = docSnap.data();
+            const projects = userData.projects || [];
+
+            // Send the projects array in the response
+            res.json({ projects });
+        } else {
+            // Document not found
+            res.status(404).json({ error: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+
+app.get("/text-to-speech", async (req, res) =>{
     const speechFile = path.resolve("./speech.mp3");
     try{
         const mp3 = await openai.audio.speech.create({
