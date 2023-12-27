@@ -43,7 +43,17 @@ const Learn = () => {
                 <PdfViewer pdfPath={project.filePath} />
               </div>
               <div className='col-span-1 shadow-lg rounded-lg p-4 flex flex-col min-h-0 bg-white mt-4 md:mt-0'>
-                <p className='hidden md:block' style={{fontSize: 25}}>Explanation</p>
+                <div className='hidden md:block'>
+                  <div className='grid grid-cols-2 items-center '>
+                    <div>
+                      <p className='' style={{fontSize: 25}}>Explanation</p>
+                    </div>
+                    <div className='justify-self-end'>
+                      <button><img src="https://cdn-icons-png.flaticon.com/512/2793/2793765.png" className="m-1" style={{width: 35}} alt="" /></button>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className='flex-grow overflow-auto border-2 border-gray-200 rounded-md mt-2 mb-3 hidden md:block'>
                   <p className='p-2'>{project.explanation}</p>
                 </div>
