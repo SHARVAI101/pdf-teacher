@@ -37,16 +37,17 @@ const Learn = () => {
         { !isLoading && 
           <div className='px-4 lg:px-20 py-5 h-full'>
             <div className='grid grid-cols-3 gap-4 h-full'>
-              <div className='col-span-2 shadow-lg rounded-lg p-4'>
+              <div className='col-span-2 shadow-lg rounded-lg p-4 flex flex-col bg-white'>
                 <p>Project: {project.projectName}</p>
                 <PdfViewer pdfPath={project.filePath} />
               </div>
-              <div className='col-span-1 shadow-lg rounded-lg p-4 flex flex-col min-h-0'>
-                <div className='flex-grow overflow-auto'>
-                  <p>{project.explanation}</p>
+              <div className='col-span-1 shadow-lg rounded-lg p-4 flex flex-col min-h-0 bg-white'>
+                <p>Explanation</p>
+                <div className='flex-grow overflow-auto border-2 border-gray-300 rounded-md my-2'>
+                  <p className='p-2'>{project.explanation}</p>
                 </div>
                 <div>
-                  <audio src={project.audioFilePath} controls></audio>
+                  <audio src={project.audioFilePath} className='w-full' controls></audio>
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@ import React from 'react'
 
 function Navbar() {
   return (
-    <header class="w-full shadow-md">
+    <header class="w-full shadow-md bg-white">
       <div class="px-4 mx-auto sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-12 lg:h-14">
           <div class="flex-shrink-0">

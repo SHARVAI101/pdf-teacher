@@ -37,11 +37,11 @@ function Upload() {
   };
 
   return (
-    <div className='w-full h-screen flex flex-col'>
+    <div className='w-full h-screen flex flex-col' style={{backgroundColor: "#f8f8f8"}}>
 
       <Navbar />
       <div className='flex-grow flex items-start md:items-center justify-center'>
-        <form onSubmit={handleSubmit} className='rounded-lg shadow-lg p-4 md:mt-[-20%]' enctype="multipart/form-data">
+        <form onSubmit={handleSubmit} className='rounded-lg shadow-lg p-4 md:mt-[-10%] bg-white' enctype="multipart/form-data">
           <p className='text-center text-2xl mb-4'>Create new project</p>
           
           <label for="name" className="mt-2 inline-block text-neutral-700 dark:text-neutral-200">Project Name</label>
