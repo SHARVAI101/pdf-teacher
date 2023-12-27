@@ -7,6 +7,8 @@ const PDFParser = require('pdf-parse');
 const fs = require('fs');
 const uploadDirectory = './uploads';
 const multer = require('multer');
+const bodyParser = require('body-parser');
+
 const { initializeApp } = require("firebase/app");
 // import { getAnalytics } from "firebase/analytics";
 const { getFirestore, doc, updateDoc, getDoc, arrayUnion } = require("firebase/firestore");
@@ -36,7 +38,8 @@ const firebaseApp = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(firebaseApp);
 const db = getFirestore(firebaseApp);
 
-app.use(express.json());
+app.use(bodyParser.json());
+// app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.listen(8000, function () {
@@ -200,3 +203,35 @@ function generateProjectID() {
     }
     return result;
 }
+
+app.post("/get_project_details", async (req,res)=>{
+    try {
+        const projectID = req.body.projectID;
+        // console.log(req.body.projectID);
+        // Reference to the user document
+        const docRef = doc(db, "user_data", "1");
+
+        // Get the document
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            // Extract the projects array
+            const userData = docSnap.data();
+            const projects = userData.projects || [];
+            
+            const matchingProject = projects.find((project) => project.projectID === projectID);
+
+            if (matchingProject) {
+                res.json(matchingProject); // Send the found project details
+            } else {
+                res.status(404).json({ error: "Project not found" });
+            }
+        } else {
+            // Document not found
+            res.status(404).json({ error: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
