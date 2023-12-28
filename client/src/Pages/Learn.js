@@ -76,7 +76,7 @@ const Learn = () => {
           </div>
         }
         { isModalOpen && (
-          <QuizModal toggleModal={toggleModal}/>
+          <QuizModal toggleModal={toggleModal} project={project}/>
         )}
       </div>      
     </div>

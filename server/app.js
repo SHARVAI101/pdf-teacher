@@ -260,11 +260,11 @@ app.post("/create_quiz", async (req, res) => {
     try {
         const pdfText = req.body.pdfText;
 
-        var prompt = "Create 5 multiple choice questions out of this text: "+pdfText+". Return the questions as a list of json objects. The key for the question will be 'question', the key for the list of options will be 'options', the key for correct answer will be 'correct_answer'. The correct_answer will contain the index of the right answer from the list of options.";
+        var prompt = "Create 5 multiple choice questions out of the text I will attach at the end. Return the questions as a list of json objects. The key for the question will be 'question', the key for the list of options will be 'options', the key for correct answer will be 'correct_answer'. The correct_answer will contain the index of the right answer from the list of options. This is the text to create your questions from: "+pdfText+".";
         const questions = await OpenAPIprompt(prompt);
 
-        res.json({ questions: questions });
+        res.json({ questions: JSON.parse(questions) });
     } catch (error) {
-        res.status(500).json({error: "Internal server error"});
+        res.status(500).json({error: error});
     }
 });

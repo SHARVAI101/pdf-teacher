@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import Loading from './Loading';
 import api from '../axiosConfig';
+import QuestionCarousel from './QuestionCarousel';
 
-function QuizModal({ toggleModal }) {
+function QuizModal({ toggleModal, project }) {
     const [isLoading, setIsLoading] = useState(true);
+    const [questions, setQuestions] = useState([]);
 
     useEffect(() => {
         console.log("called");
-        api.post('/create_quiz', { "pdfText": "project.explanation" }, {
+        api.post('/create_quiz', { "pdfText": project.explanation }, {
             headers: {
                 'Content-Type': 'application/json'
             }
         })
         .then(response => {
             console.log(response.data);
+            setQuestions(response.data.questions);
             setIsLoading(false);
         })
         .catch(error => {
@@ -31,9 +34,15 @@ function QuizModal({ toggleModal }) {
                         <p style={{fontSize: 20}}>Take a quiz!</p>
                         <button className='justify-self-end' onClick={toggleModal}>Close</button>
                     </div>
-                    <div className="flex items-center">
-                        { isLoading && <div className='ml-2 flex'><Loading /> Preparing your quiz...</div>}
-                    </div>
+                    { isLoading && 
+                    <div className='ml-2 mt-8 mb-4 flex grid grid-cols-1'>
+                        <div className='flex items-center justify-self-center'>
+                            <Loading /> <p className='ml-1'>Preparing your quiz...</p>
+                        </div>
+                    </div>}
+                    {
+                        !isLoading && <QuestionCarousel questions={questions} />
+                    }
                 </div>
             </div>
         </div>
