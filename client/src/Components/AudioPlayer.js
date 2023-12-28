@@ -4,6 +4,7 @@ import DoubtModal from './DoubtModal';
 function AudioPlayer({ audioFilePath, project }) {
     const audioRef = useRef(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [questions, setQuestions] = useState([]);
 
     const toggleModal = () => {
         handlePause();

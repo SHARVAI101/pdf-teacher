@@ -5,6 +5,7 @@ import api from '../axiosConfig';
 import Loading from '../Components/Loading';
 import PdfViewer from '../Components/PdfViewer';
 import AudioPlayer from '../Components/AudioPlayer';
+import QuizModal from '../Components/QuizModal';
 
 const Learn = () => {
   const location = useLocation();
@@ -13,6 +14,11 @@ const Learn = () => {
 
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {    
+    setIsModalOpen(!isModalOpen);
+  };
 
   useEffect(() => {
     api.post('/get_project_details', { "projectID": projectID }, {
@@ -39,7 +45,14 @@ const Learn = () => {
           <div className='px-4 lg:px-20 py-5 h-full'>
             <div className='grid grid-cols-1 md:grid-cols-3 md:gap-4 h-full'>
               <div className='md:col-span-2 shadow-lg rounded-lg p-4 flex flex-col bg-white'>
-                <p style={{fontSize: 30}}>{project.projectName}</p>
+                <div className='grid grid-cols-2 items-center'>
+                  <div>
+                    <p style={{fontSize: 30}}>{project.projectName}</p>
+                  </div>
+                  <div className='justify-self-end'>
+                    <button onClick={toggleModal} className='py-2 px-4 bg-blue-500 text-white rounded-lg'>Take a quiz!</button>
+                  </div>
+                </div>
                 <PdfViewer pdfPath={project.filePath} />
               </div>
               <div className='col-span-1 shadow-lg rounded-lg p-4 flex flex-col min-h-0 bg-white mt-4 md:mt-0'>
@@ -62,6 +75,9 @@ const Learn = () => {
             </div>
           </div>
         }
+        { isModalOpen && (
+          <QuizModal toggleModal={toggleModal}/>
+        )}
       </div>      
     </div>
   );
