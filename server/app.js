@@ -69,7 +69,7 @@ async function processPDF(pdfFilePath, res) {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
         const data = await PDFParser(pdfBuffer);
         const pdfText = data.text;
-        return "explain this in simpler terms: "+pdfText
+        return pdfText
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
           res.status(500).json({ error: 'Failed to process the PDF' });
@@ -113,7 +113,8 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
             var projectID = generateProjectID();
 
             // create prompt for explanation and get response from GPT
-            var prompt = await processPDF(filePath, res);
+            var pdfText = await processPDF(filePath, res);
+            var prompt = "explain this in simpler terms: "+ pdfText;
             var openAIresponse = await OpenAPIprompt(prompt);
 
             // generate text to speech audio file
@@ -133,7 +134,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID) {
+async function updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID, pdfText) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -144,7 +145,8 @@ async function updateUserData(openAIresponse, fileName, projectName, audioFilePa
         explanation: openAIresponse,
         fileName: fileName,
         filePath: "http://localhost:8000/static/uploads/"+fileName,
-        audioFilePath: audioFilePath
+        audioFilePath: audioFilePath,
+        pdfText: pdfText
     };
 
     // Update the document
@@ -237,5 +239,19 @@ app.post("/get_project_details", async (req,res)=>{
     } catch (error) {
         console.error("Error fetching user data:", error);
         res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+app.post("/get_answer", async (req, res) => {
+    try {
+        const question = req.body.question;
+        const pdfText = req.body.pdfText;
+
+        var prompt = "Using this text:"+pdfText+", answer this question:"+question;
+        const answer = await OpenAPIprompt(prompt);
+
+        res.json({ answer: answer });
+    } catch (error) {
+        res.status(500).json({error: "Internal server error"});
     }
 });

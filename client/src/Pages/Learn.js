@@ -57,7 +57,7 @@ const Learn = () => {
                 <div className='flex-grow overflow-auto border-2 border-gray-200 rounded-md mt-2 mb-3 hidden md:block'>
                   <p className='p-2'>{project.explanation}</p>
                 </div>
-                <AudioPlayer audioFilePath={project.audioFilePath}/>
+                <AudioPlayer audioFilePath={project.audioFilePath} project={project}/>
               </div>
             </div>
           </div>
