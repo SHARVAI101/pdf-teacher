@@ -5,6 +5,8 @@ require('dotenv').config();
 const cors = require('cors');
 const PDFParser = require('pdf-parse');
 const fs = require('fs');
+const {Leopard} = require("@picovoice/leopard-node");
+
 const multer = require('multer');
 const bodyParser = require('body-parser');
 
@@ -268,3 +270,39 @@ app.post("/create_quiz", async (req, res) => {
         res.status(500).json({error: error});
     }
 });
+
+
+const handle = new Leopard(process.env.SPEECH_TO_TEXT_API_KEY);
+
+var type1 = upload.single('audio');
+app.post('/stopRecording', type1, async (req, res) => {
+    try {
+        if (!req.file) {
+          return res.status(400).send('No file uploaded.');
+        }
+        console.log(req.file);
+
+        const filePath = req.file.path;
+
+        const newFilePath = 'public/uploads/' + req.file.filename
+        fs.rename(filePath, newFilePath, async (err) => {
+          if (err) {
+            console.error('Error moving file:', err);
+            return res.status(500).send('Error moving file.');
+          }
+    
+          console.log('File saved successfully.');
+    
+          const result = handle.processFile(newFilePath);
+          console.log(result.transcript);
+          res.send(result.transcript);
+          
+        });
+      } catch (e) {
+        console.error(e);
+        res.sendStatus(500);
+      }
+});
+
+
+

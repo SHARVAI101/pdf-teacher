@@ -3,6 +3,7 @@ import GptTextBlob from './GptTextBlob';
 import UserTextBlob from './UseTextBlob';
 import api from '../axiosConfig';
 import Loading from './Loading';
+import Microphone from './Microphone';
 
 function DoubtModal({ audioRef, toggleModal, project }) {
 
@@ -92,7 +93,10 @@ function DoubtModal({ audioRef, toggleModal, project }) {
                             </button> }
                         </div>
                     }
-                    { !isTypeMode && <div>Talk mode</div> }
+                    { !isTypeMode && 
+                    <div>
+                        <Microphone/>
+                    </div> }
                 </div>
             </div>
         </div>
