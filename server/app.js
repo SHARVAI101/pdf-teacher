@@ -58,18 +58,56 @@ const upload = multer({ storage });
 async function OpenAPIprompt (prompt) {
     const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: prompt }],
+        messages: [{ role: "user", content: prompt }],
     });
 
     return(completion.choices[0].message.content)
 };
+
+function separateTitlesAndContents(pdfText) {
+    const lines = pdfText.trim().split('\n');
+    const sections = [];
+    let currentTitle = "";
+    let currentContent = [];
+
+    lines.forEach(line => {
+        line = line.trim();
+        if (line) {
+            // Assuming that a line is a title if it's short and not a continuation of a sentence
+            if (line.length < 50 && !line.endsWith('.')) {
+                if (currentTitle) {
+                    sections.push({ title: currentTitle, content: currentContent.join('\n').trim() });
+                }
+                currentTitle = line;
+                currentContent = [];
+            } else {
+                currentContent.push(line);
+            }
+        }
+    });
+
+    // Adding the last section
+    if (currentTitle) {
+        sections.push({ title: currentTitle, content: currentContent.join('\n').trim() });
+    }
+
+    return sections;
+}
+
 
 async function processPDF(pdfFilePath, res) {
     try {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
         const data = await PDFParser(pdfBuffer);
         const pdfText = data.text;
-        return pdfText
+        const sections = separateTitlesAndContents(pdfText);
+        var prompt='';
+        sections.forEach((section, index) => {
+            prompt += `Section ${index + 1} Title: ${section.title}\n`;
+            prompt += `Section ${index + 1} Content: ${section.content}\n`;
+            prompt +=`expain in detail the above section ${index + 1}\n\n`;
+        });
+        return prompt
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
           res.status(500).json({ error: 'Failed to process the PDF' });
