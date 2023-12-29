@@ -146,7 +146,8 @@ async function updateUserData(openAIresponse, fileName, projectName, audioFilePa
         fileName: fileName,
         filePath: "http://localhost:8000/static/uploads/"+fileName,
         audioFilePath: audioFilePath,
-        pdfText: pdfText
+        pdfText: pdfText,
+        notes: ""
     };
 
     // Update the document
@@ -264,6 +265,72 @@ app.post("/create_quiz", async (req, res) => {
         const questions = await OpenAPIprompt(prompt);
 
         res.json({ questions: JSON.parse(questions) });
+    } catch (error) {
+        res.status(500).json({error: error});
+    }
+});
+
+app.post("/save_to_notes", async (req, res) => {
+    try {
+        const projectID = req.body.projectID;
+        const note = req.body.note;
+        const docRef = doc(db, "user_data", "1"); 
+        const docSnap = await getDoc(docRef);
+        
+        const userData = docSnap.data();
+        const projects = userData.projects || [];
+        const projectIndex = projects.findIndex(p => p.projectID === projectID);
+
+        let updatedNotes = projects[projectIndex].notes;
+        updatedNotes += ((updatedNotes.length > 0 ? "\n" : "") + note);
+
+        projects[projectIndex].notes = updatedNotes;
+        await updateDoc(docRef, {
+            projects: projects
+        });
+
+        res.json({ result: "success" });
+    } catch (error) {
+        res.status(500).json({error: error});
+    }
+});
+
+app.post("/save_note", async (req, res) => {
+    try {
+        const projectID = req.body.projectID;
+        const notes = req.body.notes;
+        const docRef = doc(db, "user_data", "1"); 
+        const docSnap = await getDoc(docRef);
+        
+        const userData = docSnap.data();
+        const projects = userData.projects || [];
+        const projectIndex = projects.findIndex(p => p.projectID === projectID);
+
+        projects[projectIndex].notes = notes;
+        await updateDoc(docRef, {
+            projects: projects
+        });
+
+        res.json({ result: "success" });
+    } catch (error) {
+        res.status(500).json({error: error});
+    }
+});
+
+app.post("/get_notes", async (req, res) => {
+    try {
+        const projectID = req.body.projectID;
+        
+        const docRef = doc(db, "user_data", "1"); 
+        const docSnap = await getDoc(docRef);
+        
+        const userData = docSnap.data();
+        const projects = userData.projects || [];
+        const projectIndex = projects.findIndex(p => p.projectID === projectID);
+
+        let notes = projects[projectIndex].notes;
+
+        res.json({ notes: notes });
     } catch (error) {
         res.status(500).json({error: error});
     }
