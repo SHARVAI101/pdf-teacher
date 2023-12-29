@@ -100,14 +100,7 @@ async function processPDF(pdfFilePath, res) {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
         const data = await PDFParser(pdfBuffer);
         const pdfText = data.text;
-        const sections = separateTitlesAndContents(pdfText);
-        var prompt='';
-        sections.forEach((section, index) => {
-            prompt += `Section ${index + 1} Title: ${section.title}\n`;
-            prompt += `Section ${index + 1} Content: ${section.content}\n`;
-            prompt +=`expain in detail the above section ${index + 1}\n\n`;
-        });
-        return prompt
+        return pdfText;
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
           res.status(500).json({ error: 'Failed to process the PDF' });
@@ -152,7 +145,14 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 
             // create prompt for explanation and get response from GPT
             var pdfText = await processPDF(filePath, res);
-            var prompt = "explain this in simpler terms: "+ pdfText;
+            // var prompt = "explain this in simpler terms: "+ pdfText;
+            const sections = separateTitlesAndContents(pdfText);
+            var prompt='';
+            sections.forEach((section, index) => {
+                prompt += `Section ${index + 1} Title: ${section.title}\n`;
+                prompt += `Section ${index + 1} Content: ${section.content}\n`;
+                prompt +=`expain in detail the above section ${index + 1}\n\n`;
+            });
             var openAIresponse = await OpenAPIprompt(prompt);
 
             // generate text to speech audio file
