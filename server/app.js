@@ -55,45 +55,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-async function OpenAPIprompt (prompt) {
+async function OpenAPIprompt (prompt,role) {
     const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
+        model: "gpt-4",
+        messages: [{ role: role, content: prompt }],
     });
 
     return(completion.choices[0].message.content)
 };
-
-function separateTitlesAndContents(pdfText) {
-    const lines = pdfText.trim().split('\n');
-    const sections = [];
-    let currentTitle = "";
-    let currentContent = [];
-
-    lines.forEach(line => {
-        line = line.trim();
-        if (line) {
-            // Assuming that a line is a title if it's short and not a continuation of a sentence
-            if (line.length < 50 && !line.endsWith('.')) {
-                if (currentTitle) {
-                    sections.push({ title: currentTitle, content: currentContent.join('\n').trim() });
-                }
-                currentTitle = line;
-                currentContent = [];
-            } else {
-                currentContent.push(line);
-            }
-        }
-    });
-
-    // Adding the last section
-    if (currentTitle) {
-        sections.push({ title: currentTitle, content: currentContent.join('\n').trim() });
-    }
-
-    return sections;
-}
-
 
 async function processPDF(pdfFilePath, res) {
     try {
@@ -145,20 +114,15 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 
             // create prompt for explanation and get response from GPT
             var pdfText = await processPDF(filePath, res);
-            // var prompt = "explain this in simpler terms: "+ pdfText;
-            const sections = separateTitlesAndContents(pdfText);
-            var prompt='';
-            sections.forEach((section, index) => {
-                prompt += `Section ${index + 1} Title: ${section.title}\n`;
-                prompt += `Section ${index + 1} Content: ${section.content}\n`;
-                prompt +=`expain in detail the above section ${index + 1}\n\n`;
-            });
-            console.log(prompt);
-            var openAIresponse = await OpenAPIprompt(prompt);
+            var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
+            var prompt = await OpenAPIprompt(initializeprompt,"system");
+            console.log(prompt+"\n\n\n\n");
+            var openAIresponse = await OpenAPIprompt(prompt,"user");
+            console.log(openAIresponse)
 
             // generate text to speech audio file
             var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse, projectID);
-            console.log(audioFilePath);
+            // console.log(audioFilePath);
             
             // update the firebase db
             updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID,pdfText);
@@ -287,7 +251,7 @@ app.post("/get_answer", async (req, res) => {
         const pdfText = req.body.pdfText;
 
         var prompt = "Using this text:"+pdfText+", answer this question:"+question;
-        const answer = await OpenAPIprompt(prompt);
+        const answer = await OpenAPIprompt(prompt,"user");
 
         res.json({ answer: answer });
     } catch (error) {
@@ -300,7 +264,7 @@ app.post("/create_quiz", async (req, res) => {
         const pdfText = req.body.pdfText;
 
         var prompt = "Create 5 multiple choice questions out of the text I will attach at the end. Return the questions as a list of json objects. The key for the question will be 'question', the key for the list of options will be 'options', the key for correct answer will be 'correct_answer'. The correct_answer will contain the index of the right answer from the list of options. This is the text to create your questions from: "+pdfText+".";
-        const questions = await OpenAPIprompt(prompt);
+        const questions = await OpenAPIprompt(prompt,"user");
 
         res.json({ questions: JSON.parse(questions) });
     } catch (error) {
