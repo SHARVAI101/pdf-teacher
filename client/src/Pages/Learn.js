@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import api from '../axiosConfig';
@@ -36,8 +36,41 @@ const Learn = () => {
     });
   }, []);
 
+  // Tool tip for text selection
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [toolTipX, setToolTipX] = useState(0.0);
+  const [toolTipY, setToolTipY] = useState(0.0);
+
+  const textRef = useRef(null);
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.toString().trim() === '') {
+      setIsTooltipVisible(false);
+      return;
+    }
+    console.log(selection.getRangeAt(0).getBoundingClientRect());
+    console.log(selection.getRangeAt(0).getBoundingClientRect()["x"]);
+    var x = selection.getRangeAt(0).getBoundingClientRect()["x"];
+    var y = selection.getRangeAt(0).getBoundingClientRect()["y"];
+    var width = selection.getRangeAt(0).getBoundingClientRect()["width"];
+    setToolTipX(x+width/4);
+    setToolTipY(y-50);
+    setIsTooltipVisible(true);
+  };
+
+  const copyToClipboard = () => {
+    const selection = window.getSelection();
+    navigator.clipboard.writeText(selection.toString()).then(() => {
+        // Possibly show a confirmation message
+        setIsTooltipVisible(false);
+    });
+  };
+
+  
+
   return (
-    <div className='flex flex-col w-full h-screen'>
+    <div className='flex flex-col w-full h-screen' onClick={handleTextSelection}>
       <Navbar />
       <div className='flex-grow overflow-auto'>
         { isLoading && <Loading /> }
@@ -59,7 +92,7 @@ const Learn = () => {
                 <div className='hidden md:block'>
                   <div className='grid grid-cols-2 items-center '>
                     <div>
-                      <p className='' style={{fontSize: 25}}>Explanation</p>
+                      <p id="explanation-p" className='explanation-p' style={{fontSize: 25}}>Explanation</p>
                     </div>
                     <div className='justify-self-end'>
                       <button><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" className="m-1 mr-6" style={{width: 30}} alt="" /></button>
@@ -69,7 +102,12 @@ const Learn = () => {
                 </div>
                 
                 <div className='flex-grow overflow-auto border-2 border-gray-200 rounded-md mt-2 mb-3 hidden md:block'>
-                  <p className='p-2'>{project.explanation}</p>
+                  <p className='p-2' ref={textRef} >{project.explanation}</p>
+                  {isTooltipVisible && (
+                    <div className="absolute bg-black text-white p-2 rounded-md" style={{ top: toolTipY, left: toolTipX }}>
+                      <button onClick={copyToClipboard} className='flex items-center'>Save to Notes <img src="https://cdn-user-icons.flaticon.com/22664/22664815/1703816755490.svg?token=exp=1703817659~hmac=e3b59c23f7511dbeec261b53dab3bc82" className="ml-2" style={{width: 18}} alt="" /></button>
+                    </div>
+                  )}
                 </div>
                 <AudioPlayer audioFilePath={project.audioFilePath} project={project}/>
               </div>

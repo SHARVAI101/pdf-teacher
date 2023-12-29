@@ -23,4 +23,9 @@ body {
   .modal-enter {
     animation: slideDown 0.7s ease-out forwards;
   }
+
+p::selection {
+    background: #1289A7 !important;
+    color: #ffffff !important;
+}
   
