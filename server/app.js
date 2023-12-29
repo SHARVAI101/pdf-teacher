@@ -153,6 +153,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
                 prompt += `Section ${index + 1} Content: ${section.content}\n`;
                 prompt +=`expain in detail the above section ${index + 1}\n\n`;
             });
+            console.log(prompt);
             var openAIresponse = await OpenAPIprompt(prompt);
 
             // generate text to speech audio file
@@ -160,7 +161,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
             console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID);
+            updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID,pdfText);
             res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
