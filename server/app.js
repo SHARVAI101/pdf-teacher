@@ -114,18 +114,18 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 
             // create prompt for explanation and get response from GPT
             var pdfText = await processPDF(filePath, res);
-            var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
-            var prompt = await OpenAPIprompt(initializeprompt,"system");
-            console.log(prompt+"\n\n\n\n");
-            var openAIresponse = await OpenAPIprompt(prompt,"user");
-            console.log(openAIresponse)
+            // var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
+            // var prompt = await OpenAPIprompt(initializeprompt,"system");
+            // console.log(prompt+"\n\n\n\n");
+            var explanation = await OpenAPIprompt("explain this:"+pdfText, "user");
+            console.log(explanation)
 
             // generate text to speech audio file
-            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse, projectID);
+            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(explanation, projectID);
             // console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID,pdfText);
+            updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText);
             res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
@@ -137,7 +137,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID, pdfText) {
+async function updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -145,7 +145,7 @@ async function updateUserData(openAIresponse, fileName, projectName, audioFilePa
     const newProject = {
         projectID: projectID,
         projectName: projectName,
-        explanation: openAIresponse,
+        explanation: explanation,
         fileName: fileName,
         filePath: "http://localhost:8000/static/uploads/"+fileName,
         audioFilePath: audioFilePath,
