@@ -96,7 +96,7 @@ const Learn = () => {
     <div className='flex flex-col w-full h-screen' onClick={handleTextSelection}>
       <Navbar />
       <div className='flex-grow overflow-auto'>
-        { isLoading && <Loading /> }
+        { isLoading && <div className='w-full h-full flex justify-center items-center'><div className=''><Loading /></div></div> }
         { !isLoading && 
           <div className='px-4 lg:px-20 py-5 h-full'>
             <div className='grid grid-cols-1 md:grid-cols-3 md:gap-4 h-full'>
