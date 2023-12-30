@@ -118,8 +118,8 @@ const Learn = () => {
                       <p id="explanation-p" className='explanation-p' style={{fontSize: 25}}>Explanation</p>
                     </div>
                     <div className='justify-self-end'>
-                      <button onClick={toggleNotesModal}><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" className="m-1 mr-6" style={{width: 30}} alt="" /></button>
-                      <button><img src="https://cdn-icons-png.flaticon.com/512/2793/2793765.png" className="m-1 mr-4" style={{width: 30}} alt="" /></button>
+                      <button onClick={toggleNotesModal}><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" className="m-1 mr-4" style={{width: 30}} alt="" /></button>
+                      {/* <button><img src="https://cdn-icons-png.flaticon.com/512/2793/2793765.png" className="m-1 mr-4" style={{width: 30}} alt="" /></button> */}
                     </div>
                   </div>
                 </div>
