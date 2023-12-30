@@ -84,7 +84,7 @@ function DoubtModal({ audioRef, toggleModal, project }) {
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
             {/* Modal Content */}
-            <div className="relative top-20 mx-auto p-5 border w-4/5 md:w-1/2 shadow-lg rounded-md bg-white">
+            <div className="relative top-20 mx-auto p-5 border w-4/5 md:w-1/2 shadow-lg rounded-md bg-white modal-enter">
                 <div className='grid grid-cols-1 w-full'>
                     <div className='grid grid-cols-2'>
                         <div className='flex'>

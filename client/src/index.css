@@ -10,3 +10,22 @@ body {
     /* background-color: #292A33; */
     background-color: #f5f5f5;
 }
+
+@keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  .modal-enter {
+    animation: slideDown 0.7s ease-out forwards;
+  }
+
+p::selection {
+    background: #1289A7 !important;
+    color: #ffffff !important;
+}
+  
