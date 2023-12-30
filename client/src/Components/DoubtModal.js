@@ -22,7 +22,7 @@ function DoubtModal({ audioRef, toggleModal, project }) {
             
             setIsLoading(true);
 
-            api.post('/get_answer', { "question": currentMessage.trim(), "pdfText": project.explanation }, {
+            api.post('/get_answer', { "question": trimmedMessage, "pdfText": project.explanation }, {
                 headers: {
                   'Content-Type': 'application/json'
                 }
@@ -38,6 +38,38 @@ function DoubtModal({ audioRef, toggleModal, project }) {
             });
         }
     };
+
+    const handleSubmitMicrophone = (message) => {
+        const trimmedMessage = message.trim();
+        if (trimmedMessage !== "") {
+            setAllMessages(prevMessages => [...prevMessages, trimmedMessage]);
+            // setCurrentMessage(""); 
+            
+            setIsLoading(true);
+
+            api.post('/get_answer', { "question": trimmedMessage, "pdfText": project.explanation }, {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+            .then(response => {
+                console.log(response.data);
+                setAllMessages(prevMessages => [...prevMessages, response.data.answer]);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setIsLoading(false);
+            });
+        }
+    };
+
+    const setCurrentMessageFunction = (message) => {
+        console.log("mess="+message);
+        setCurrentMessage(message);
+        handleSubmit();
+        console.log("=="+currentMessage);
+    }
 
     const handleOptionClick = (option) => {
         console.log(option);
@@ -95,7 +127,7 @@ function DoubtModal({ audioRef, toggleModal, project }) {
                     }
                     { !isTypeMode && 
                     <div>
-                        <Microphone/>
+                        <Microphone handleSubmitMicrophone={handleSubmitMicrophone}/>
                     </div> }
                 </div>
             </div>

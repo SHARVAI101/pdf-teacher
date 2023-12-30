@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import api from '../axiosConfig';
 import MicRecorder from 'mic-recorder-to-mp3';
 
-const Microphone = () => {
+const Microphone = ({ handleSubmitMicrophone }) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recorder, setRecorder] = useState(
       new MicRecorder({ bitRate: 128 })
@@ -25,7 +25,7 @@ const Microphone = () => {
             var formData = new FormData();
             formData.append('audio', file);
             const response = await api.post('/stopRecording', formData);
-            console.log(response.data);
+            handleSubmitMicrophone(response.data+"?");
           }).catch((e) => {
             alert('We could not retrieve your message');
             console.log(e);
@@ -42,9 +42,9 @@ const Microphone = () => {
     }
 
     return (
-    <div>
-        <button onClick={handleToggleRecording}>
-            {isRecording ? 'Stop Recording' : 'Start Recording'}
+    <div className="flex justify-center">
+        <button onClick={handleToggleRecording} className="p-2 shadow-md rounded-lg border" style={{fontSize: 12}}>
+            {isRecording ? <span><img src="https://cdn-icons-png.flaticon.com/512/10181/10181283.png" className="mx-auto mb-1" style={{width: 55}}/>Stop Recording</span> : <span><img src="https://cdn-icons-png.flaticon.com/512/3687/3687408.png " className="mx-auto mb-1" style={{width: 50}}/>Start Recording</span>}
         </button>
     </div>
     );
