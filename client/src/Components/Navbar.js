@@ -9,7 +9,7 @@ function Navbar() {
             {/* <a href="#" title="" class="flex">
               <img class="w-auto h-8" src="https://cdn.rareblocks.xyz/collection/celebration/images/hero/5/logo.svg" alt="" />
             </a> */}
-            <p>PDF Teacher</p>
+            <p>ExplainThis</p>
           </div>
 
           <div class="lg:flex lg:items-center lg:justify-end lg:space-x-6 sm:ml-auto">
