@@ -114,17 +114,25 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 
             // create prompt for explanation and get response from GPT
             var pdfText = await processPDF(filePath, res);
+<<<<<<< HEAD
             var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
             var prompt = await OpenAPIprompt(initializeprompt,"system");
             var openAIresponse = await OpenAPIprompt(prompt,"user");
             console.log(openAIresponse)
+=======
+            // var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
+            // var prompt = await OpenAPIprompt(initializeprompt,"system");
+            // console.log(prompt+"\n\n\n\n");
+            var explanation = await OpenAPIprompt("explain this:"+pdfText, "user");
+            console.log(explanation)
+>>>>>>> d8f4c9718de0328c394b2bacaa0d32e1a35ed6e6
 
             // generate text to speech audio file
-            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse, projectID);
+            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(explanation, projectID);
             // console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID,pdfText);
+            updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText);
             res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
@@ -136,7 +144,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID, pdfText) {
+async function updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -144,11 +152,12 @@ async function updateUserData(openAIresponse, fileName, projectName, audioFilePa
     const newProject = {
         projectID: projectID,
         projectName: projectName,
-        explanation: openAIresponse,
+        explanation: explanation,
         fileName: fileName,
         filePath: "http://localhost:8000/static/uploads/"+fileName,
         audioFilePath: audioFilePath,
-        pdfText: pdfText
+        pdfText: pdfText,
+        notes: ""
     };
 
     // Update the document
@@ -268,6 +277,72 @@ app.post("/create_quiz", async (req, res) => {
         const questions = await OpenAPIprompt(prompt,"user");
 
         res.json({ questions: JSON.parse(questions) });
+    } catch (error) {
+        res.status(500).json({error: error});
+    }
+});
+
+app.post("/save_to_notes", async (req, res) => {
+    try {
+        const projectID = req.body.projectID;
+        const note = req.body.note;
+        const docRef = doc(db, "user_data", "1"); 
+        const docSnap = await getDoc(docRef);
+        
+        const userData = docSnap.data();
+        const projects = userData.projects || [];
+        const projectIndex = projects.findIndex(p => p.projectID === projectID);
+
+        let updatedNotes = projects[projectIndex].notes;
+        updatedNotes += ((updatedNotes.length > 0 ? "\n" : "") + note);
+
+        projects[projectIndex].notes = updatedNotes;
+        await updateDoc(docRef, {
+            projects: projects
+        });
+
+        res.json({ result: "success" });
+    } catch (error) {
+        res.status(500).json({error: error});
+    }
+});
+
+app.post("/save_note", async (req, res) => {
+    try {
+        const projectID = req.body.projectID;
+        const notes = req.body.notes;
+        const docRef = doc(db, "user_data", "1"); 
+        const docSnap = await getDoc(docRef);
+        
+        const userData = docSnap.data();
+        const projects = userData.projects || [];
+        const projectIndex = projects.findIndex(p => p.projectID === projectID);
+
+        projects[projectIndex].notes = notes;
+        await updateDoc(docRef, {
+            projects: projects
+        });
+
+        res.json({ result: "success" });
+    } catch (error) {
+        res.status(500).json({error: error});
+    }
+});
+
+app.post("/get_notes", async (req, res) => {
+    try {
+        const projectID = req.body.projectID;
+        
+        const docRef = doc(db, "user_data", "1"); 
+        const docSnap = await getDoc(docRef);
+        
+        const userData = docSnap.data();
+        const projects = userData.projects || [];
+        const projectIndex = projects.findIndex(p => p.projectID === projectID);
+
+        let notes = projects[projectIndex].notes;
+
+        res.json({ notes: notes });
     } catch (error) {
         res.status(500).json({error: error});
     }
