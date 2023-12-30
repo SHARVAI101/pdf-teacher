@@ -55,10 +55,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-async function OpenAPIprompt (prompt) {
+async function OpenAPIprompt (prompt,role) {
     const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: prompt }],
+        model: "gpt-4",
+        messages: [{ role: role, content: prompt }],
     });
 
     return(completion.choices[0].message.content)
@@ -69,7 +69,7 @@ async function processPDF(pdfFilePath, res) {
         const pdfBuffer = fs.readFileSync(pdfFilePath);
         const data = await PDFParser(pdfBuffer);
         const pdfText = data.text;
-        return pdfText
+        return pdfText;
     } catch (error) {
           console.error('An error occurred while processing the PDF:', error);
           res.status(500).json({ error: 'Failed to process the PDF' });
@@ -114,15 +114,18 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 
             // create prompt for explanation and get response from GPT
             var pdfText = await processPDF(filePath, res);
-            var prompt = "explain this in simpler terms: "+ pdfText;
-            var openAIresponse = await OpenAPIprompt(prompt);
+            // var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
+            // var prompt = await OpenAPIprompt(initializeprompt,"system");
+            // console.log(prompt+"\n\n\n\n");
+            var explanation = await OpenAPIprompt("explain this:"+pdfText, "user");
+            console.log(explanation)
 
             // generate text to speech audio file
-            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(openAIresponse, projectID);
-            console.log(audioFilePath);
+            var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(explanation, projectID);
+            // console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID);
+            updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText);
             res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
@@ -134,7 +137,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(openAIresponse, fileName, projectName, audioFilePath, projectID, pdfText) {
+async function updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -142,7 +145,7 @@ async function updateUserData(openAIresponse, fileName, projectName, audioFilePa
     const newProject = {
         projectID: projectID,
         projectName: projectName,
-        explanation: openAIresponse,
+        explanation: explanation,
         fileName: fileName,
         filePath: "http://localhost:8000/static/uploads/"+fileName,
         audioFilePath: audioFilePath,
@@ -249,7 +252,7 @@ app.post("/get_answer", async (req, res) => {
         const pdfText = req.body.pdfText;
 
         var prompt = "Using this text:"+pdfText+", answer this question:"+question;
-        const answer = await OpenAPIprompt(prompt);
+        const answer = await OpenAPIprompt(prompt,"user");
 
         res.json({ answer: answer });
     } catch (error) {
@@ -262,7 +265,7 @@ app.post("/create_quiz", async (req, res) => {
         const pdfText = req.body.pdfText;
 
         var prompt = "Create 5 multiple choice questions out of the text I will attach at the end. Return the questions as a list of json objects. The key for the question will be 'question', the key for the list of options will be 'options', the key for correct answer will be 'correct_answer'. The correct_answer will contain the index of the right answer from the list of options. This is the text to create your questions from: "+pdfText+".";
-        const questions = await OpenAPIprompt(prompt);
+        const questions = await OpenAPIprompt(prompt,"user");
 
         res.json({ questions: JSON.parse(questions) });
     } catch (error) {
