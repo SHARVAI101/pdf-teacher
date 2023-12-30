@@ -114,18 +114,10 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 
             // create prompt for explanation and get response from GPT
             var pdfText = await processPDF(filePath, res);
-<<<<<<< HEAD
             var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
             var prompt = await OpenAPIprompt(initializeprompt,"system");
             var openAIresponse = await OpenAPIprompt(prompt,"user");
             console.log(openAIresponse)
-=======
-            // var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
-            // var prompt = await OpenAPIprompt(initializeprompt,"system");
-            // console.log(prompt+"\n\n\n\n");
-            var explanation = await OpenAPIprompt("explain this:"+pdfText, "user");
-            console.log(explanation)
->>>>>>> d8f4c9718de0328c394b2bacaa0d32e1a35ed6e6
 
             // generate text to speech audio file
             var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(explanation, projectID);
