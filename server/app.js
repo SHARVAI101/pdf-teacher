@@ -116,7 +116,6 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
             var pdfText = await processPDF(filePath, res);
             var initializeprompt =  pdfText+"\n\ngenerate prompt in paragraph to get explaination of the excate content topice wise and the prompt generated should have the instruction to provide vertical indentation";
             var prompt = await OpenAPIprompt(initializeprompt,"system");
-            console.log(prompt+"\n\n\n\n");
             var openAIresponse = await OpenAPIprompt(prompt,"user");
             console.log(openAIresponse)
 
@@ -231,6 +230,8 @@ app.post("/get_project_details", async (req,res)=>{
             const matchingProject = projects.find((project) => project.projectID === projectID);
 
             if (matchingProject) {
+                var explanationAIresponse = await OpenAPIprompt(matchingProject.explanation+"\ndivide the conetent into proper sections and display the solution","user");
+                matchingProject.explanation=explanationAIresponse
                 res.json(matchingProject); // Send the found project details
             } else {
                 res.status(404).json({ error: "Project not found" });
