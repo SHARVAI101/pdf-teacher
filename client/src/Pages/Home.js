@@ -43,7 +43,7 @@ function Home() {
             <h1 class="text-4xl font-bold sm:text-6xl">
               <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-white">ExplainIt</span>
             </h1>
-            <p class="mt-5 text-base text-white sm:text-xl">Your AI-powered teacher</p>
+            <p class="mt-5 text-base text-white sm:text-xl">Your AI-powered personal tutor</p>
 
             <a href="/dashboard" title="" class="inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg sm:mt-16 hover:bg-blue-700 focus:bg-blue-700" role="button">
               Start learning
