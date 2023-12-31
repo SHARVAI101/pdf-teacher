@@ -11,7 +11,7 @@ function Navbar() {
             </a> */}
             <a href='/'>
               <h1 class="text-2xl font-bold">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-gray-500">ExplainThis</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-gray-500">ExplainIt</span>
               </h1>
             </a>
           </div>
