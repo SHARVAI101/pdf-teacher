@@ -1,9 +1,18 @@
-import React, { useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
+import Confetti from 'react-confetti'
 
 function QuestionCarousel({ questions }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    showConfetti && 
+      setTimeout(() => {
+        setShowConfetti(false)
+      }, 5000)
+  }, [showConfetti])
 
   const goToPrevious = () => {
     const isFirstSlide = currentIndex === 0;
@@ -16,8 +25,13 @@ function QuestionCarousel({ questions }) {
     // const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setSelectedOption(null);
     setCurrentIndex(currentIndex+1);
+    console.log(currentIndex);
+    if(currentIndex === 4){
+      setShowConfetti(true);
+    }
   };
 
+console.log(showConfetti);
   const handleOptionSelect = (option) => {
     if (questions[currentIndex].options[questions[currentIndex].correct_answer] == option && selectedOption==null) {
       setScore(score+1);
@@ -54,6 +68,7 @@ function QuestionCarousel({ questions }) {
         }
         { currentIndex == 5 && 
           <div>
+            {showConfetti &&<Confetti wind={0.01} gravity={0.1} width='500px' height='250px'/>}
             <p className='text-2xl text-center mt-8 text-white'>You've completed the test!</p>
             <p className='text-xl text-center mt-4 text-pink-300'>Your score is { score }/5</p>
           </div>
