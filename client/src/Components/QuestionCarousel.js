@@ -47,11 +47,10 @@ console.log(showConfetti);
   return (
     <div className="mt-4 pb-10 rounded-lg items-center justify-center mb-4 px-8 bg-gradient-to-r from-blue-500 to-indigo-500">
       {/* <button className="p-4" onClick={goToPrevious}>{"<"}</button> */}
-      <span>{currentIndex+1}/{5}</span>
       <div className="w-full flex justify-center grid grid-cols-1">
         { currentIndex < 5 && 
           <div>
-          <p className='text-lg font-semibold text-center mt-8 text-gray-200'>{ questions[currentIndex].question }</p>
+          <p className='text-lg font-semibold text-center mt-8 text-gray-200'>{ questions[currentIndex].question } (<span className='mt-2'>{currentIndex+1}/{5}</span>)</p>
           <div className="flex flex-col space-y-3 mt-6">
               {questions[currentIndex].options.map((option, index) => (
                 <button 
