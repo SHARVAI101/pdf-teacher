@@ -59,7 +59,7 @@ const upload = multer({ storage });
 
 async function OpenAPIprompt (prompt,role) {
     const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: [{ role: role, content: prompt }],
     });
 
@@ -120,14 +120,16 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
             // var prompt = await OpenAPIprompt(initializeprompt,"system");
             // console.log(prompt+"\n\n\n\n");
             var explanation = await OpenAPIprompt("explain this:"+pdfText, "user");
-            console.log(explanation)
+            var explanation = await OpenAPIprompt("Divide the following text into proper paragraphs with headings. All headings should be surrounded by <h3> and <b> tags and Add <br><br> at the end of every paragraph. Text: "+explanation, "user");
+            console.log(explanation);
+            var summary = await OpenAPIprompt("summarize into 10-15 words descrbing what we are studying here:"+pdfText, "user");
 
             // generate text to speech audio file
             var audioFilePath = "http://localhost:8000/static/audio/"+await textToSpeech(explanation, projectID);
             // console.log(audioFilePath);
             
             // update the firebase db
-            updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText);
+            updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText, summary);
             res.status(200).send({projectID: projectID});
         } else {
             console.log("The is not PDF file")
@@ -139,7 +141,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 })
 
 // Function to update the document
-async function updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText) {
+async function updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText, summary) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
 
@@ -152,7 +154,8 @@ async function updateUserData(explanation, fileName, projectName, audioFilePath,
         filePath: "http://localhost:8000/static/uploads/"+fileName,
         audioFilePath: audioFilePath,
         pdfText: pdfText,
-        notes: ""
+        notes: "",
+        summary: summary
     };
 
     // Update the document

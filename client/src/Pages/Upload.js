@@ -67,7 +67,7 @@ function Upload() {
           { isLoading && <div className="w-full mt-4 flex justify-center"><Loading /></div> }
           { !isLoading && <button 
             type="submit" 
-            className="mt-6 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+            className="mt-6 w-full bg-gradient-to-r from-green-500 to-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
           >
             Create Project
           </button>}

@@ -106,7 +106,7 @@ const Learn = () => {
                     <p style={{fontSize: 30}}>{project.projectName}</p>
                   </div>
                   <div className='justify-self-end'>
-                    <button onClick={toggleModal} className='py-2 px-4 bg-blue-500 text-white rounded-lg'>Take a quiz!</button>
+                    <button onClick={toggleModal} className='py-2 px-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg'>Take a quiz!</button>
                   </div>
                 </div>
                 <PdfViewer pdfPath={project.filePath} />
@@ -125,7 +125,12 @@ const Learn = () => {
                 </div>
                 
                 <div className='flex-grow overflow-auto border-2 border-gray-200 rounded-md mt-2 mb-3 hidden md:block'>
-                  <p className='p-2' ref={textRef} >{project.explanation}</p>
+                  {/* <p className='p-2' ref={textRef} >{project.explanation}</p> */}
+                  <div
+                      className='p-2'
+                      ref={textRef}
+                      dangerouslySetInnerHTML={{ __html: project.explanation }}
+                  />
                   {isTooltipVisible && (
                     <div className="absolute bg-black text-white p-2 rounded-md" style={{ top: toolTipY, left: toolTipX }}>
                       <button onClick={saveToNotes} className='flex items-center'>
