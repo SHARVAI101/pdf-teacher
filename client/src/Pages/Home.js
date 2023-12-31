@@ -43,7 +43,7 @@ function Home() {
             <h1 class="text-4xl font-bold sm:text-6xl">
               <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-white">ExplainThis</span>
             </h1>
-            <p class="mt-5 text-base text-white sm:text-xl">A hyperoptimized tool for students to learn their PDFs.</p>
+            <p class="mt-5 text-base text-white sm:text-xl">Your AI-powered teacher</p>
 
             <a href="/dashboard" title="" class="inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg sm:mt-16 hover:bg-blue-700 focus:bg-blue-700" role="button">
               Start learning
@@ -52,7 +52,7 @@ function Home() {
               </svg>
             </a>
 
-            <div class="grid grid-cols-1 px-20 mt-12 text-left gap-x-12 gap-y-8 sm:grid-cols-3 sm:px-0">
+            {/* <div class="grid grid-cols-1 px-20 mt-12 text-left gap-x-12 gap-y-8 sm:grid-cols-3 sm:px-0">
               <div class="flex items-center">
                 <svg class="flex-shrink-0" width="31" height="25" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -123,7 +123,7 @@ function Home() {
                 </svg>
                 <p class="ml-3 text-sm text-white">Secured & safe online payment</p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
