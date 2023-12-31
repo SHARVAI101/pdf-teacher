@@ -26,7 +26,7 @@ function PreviousProjectCard({ project }) {
       </div>
 
       <div class="flex justify-start items-center">
-          <FaCalendarDays style={{ color: "#d1d1d1" }}/> <p className='mt-1 ml-2 text-gray-400' style={{fontSize: 12}}>12 Jan 2023</p>
+          <FaCalendarDays style={{ color: "#d1d1d1" }}/> <p className='mt-1 ml-2 text-gray-400' style={{fontSize: 12}}>{ project.date }</p>
       </div>
   </div>
   )

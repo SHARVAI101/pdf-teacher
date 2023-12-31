@@ -146,6 +146,9 @@ async function updateUserData(explanation, fileName, projectName, audioFilePath,
     const docRef = doc(db, "user_data", "1");
     const imgNumber = Math.floor(Math.random() * 4);
 
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getUTCDate()} ${currentDate.toLocaleString('default', { month: 'short' })} ${currentDate.getUTCFullYear()}`;
+
     // New map (object) to add to the projects array
     const newProject = {
         projectID: projectID,
@@ -157,7 +160,8 @@ async function updateUserData(explanation, fileName, projectName, audioFilePath,
         pdfText: pdfText,
         notes: "",
         summary: summary,
-        imgNumber: imgNumber
+        imgNumber: imgNumber,
+        date: formattedDate
     };
 
     // Update the document
