@@ -67,7 +67,8 @@ console.log(showConfetti);
         }
         { currentIndex == 5 && 
           <div>
-            {showConfetti &&<Confetti wind={0.01} gravity={0.1} width='500px' height='250px'/>}
+            {showConfetti &&<Confetti wind={0.01} gravity={0.1} className='w-full'/>} 
+            {/* width='500px' height='250px' */}
             <p className='text-2xl text-center mt-8 text-white'>You've completed the test!</p>
             <p className='text-xl text-center mt-4 text-pink-300'>Your score is { score }/5</p>
           </div>
