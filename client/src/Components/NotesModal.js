@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import api from '../axiosConfig';
 import Loading from './Loading';
+import { FaX } from "react-icons/fa6";
 
 function NotesModal({ projectID, toggleNotesModal }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -58,8 +59,8 @@ function NotesModal({ projectID, toggleNotesModal }) {
                                 />
                                 My notes
                             </p>
-                            <button className="justify-self-end" onClick={toggleNotesModal}>
-                                Close
+                            <button className="justify-self-end pr-2" onClick={toggleNotesModal}>
+                                <FaX />
                             </button>
                         </div>
                         {isLoading && <div className="mt-4 mx-auto"><Loading /></div>}

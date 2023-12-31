@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Loading from './Loading';
 import api from '../axiosConfig';
 import QuestionCarousel from './QuestionCarousel';
+import { FaX } from "react-icons/fa6";
 
 function QuizModal({ toggleModal, project }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +33,9 @@ function QuizModal({ toggleModal, project }) {
                 <div className='grid grid-cols-1 w-full'>
                     <div className='grid grid-cols-2'>
                         <p style={{fontSize: 20}}>Take a quiz!</p>
-                        <button className='justify-self-end' onClick={toggleModal}>Close</button>
+                        <button className='justify-self-end pr-2' onClick={toggleModal}>
+                            <FaX />
+                        </button>
                     </div>
                     { isLoading && 
                     <div className='ml-2 mt-8 mb-4 flex grid grid-cols-1'>

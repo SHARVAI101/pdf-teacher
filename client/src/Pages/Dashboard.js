@@ -27,7 +27,7 @@ function Dashboard() {
   return (
     <div>
         <Navbar />
-        <div className='px-4 lg:px-20 pt-5'>
+        <div className='px-4 lg:px-20 pt-5 pb-5'>
             <h1 className='text-2xl'>Create new project</h1>
             <AddButton />
             <h1 className='text-1xl mt-2'>My previous projects</h1>

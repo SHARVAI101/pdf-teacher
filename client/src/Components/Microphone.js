@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import api from '../axiosConfig';
 import MicRecorder from 'mic-recorder-to-mp3';
+import { FaMicrophone } from "react-icons/fa6";
+import { FaRegCircleStop } from "react-icons/fa6";
 
 const Microphone = ({ handleSubmitMicrophone }) => {
     const [isRecording, setIsRecording] = useState(false);
@@ -44,7 +46,19 @@ const Microphone = ({ handleSubmitMicrophone }) => {
     return (
     <div className="flex justify-center">
         <button onClick={handleToggleRecording} className="p-2 shadow-md rounded-lg border" style={{fontSize: 12}}>
-            {isRecording ? <span><img src="https://cdn-icons-png.flaticon.com/512/10181/10181283.png" className="mx-auto mb-1" style={{width: 55}}/>Stop Recording</span> : <span><img src="https://cdn-icons-png.flaticon.com/512/3687/3687408.png " className="mx-auto mb-1" style={{width: 50}}/>Start Recording</span>}
+            {isRecording ? 
+              <span>
+                {/* <img src="https://cdn-icons-png.flaticon.com/512/10181/10181283.png" className="mx-auto mb-1" style={{width: 55}}/> */}
+                <FaRegCircleStop style={{fontSize: 30, margin: "5 auto", color: "#ff002f"}}/>
+                Stop Recording
+              </span> 
+              : 
+              <span>
+                {/* <img src="https://cdn-icons-png.flaticon.com/512/3687/3687408.png " className="mx-auto mb-1" style={{width: 50}}/> */}
+                <FaMicrophone style={{fontSize: 30, margin: "5 auto", color: "#ff002f"}}/>
+                Start Recording
+              </span>
+            }
         </button>
     </div>
     );

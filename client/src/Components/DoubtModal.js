@@ -4,6 +4,7 @@ import UserTextBlob from './UseTextBlob';
 import api from '../axiosConfig';
 import Loading from './Loading';
 import Microphone from './Microphone';
+import { FaX } from "react-icons/fa6";
 
 function DoubtModal({ audioRef, toggleModal, project }) {
 
@@ -98,7 +99,9 @@ function DoubtModal({ audioRef, toggleModal, project }) {
                                 </div>
                             </div>
                         </div>
-                        <button className='justify-self-end' onClick={toggleModal}>Close</button>
+                        <button className='justify-self-end pr-2' onClick={toggleModal}>
+                            <FaX />
+                        </button>
                     </div>
                     <div className='border rounded border-gray-300 p-4 mb-2 mt-4 overflow-auto grid grid-cols-1' style={{maxHeight: 600}}>
                         {allMessages.map((message, index) => (
