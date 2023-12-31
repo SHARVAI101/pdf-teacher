@@ -32,12 +32,15 @@ function Dashboard() {
             <AddButton />
             <h1 className='text-1xl mt-2'>My previous projects</h1>
             { isLoading && <div className='pt-3'><Loading /></div> }
-            { !isLoading && 
-              <div className='mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4'>
-                {projects.map((project, index) => (
-                  <PreviousProjectCard key={index} project={project} />
-                ))}
-              </div> 
+            { !isLoading && projects.length > 0 ? (
+    <div className='mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+      {projects.map((project, index) => (
+        <PreviousProjectCard key={index} project={project} />
+      ))}
+    </div>
+  ) : (
+    !isLoading && <div className='mt-4 text-gray-300' style={{fontSize: 12}}>No previous projects.</div>
+  )
             } 
         </div>
     </div>    
