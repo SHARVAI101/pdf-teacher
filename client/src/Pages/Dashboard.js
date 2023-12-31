@@ -31,9 +31,9 @@ function Dashboard() {
             <h1 className='text-2xl'>Create new project</h1>
             <AddButton />
             <h1 className='text-1xl mt-2'>My previous projects</h1>
-            { isLoading && <Loading /> }
+            { isLoading && <div className='pt-3'><Loading /></div> }
             { !isLoading && 
-              <div className='mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+              <div className='mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4'>
                 {projects.map((project, index) => (
                   <PreviousProjectCard key={index} project={project} />
                 ))}

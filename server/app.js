@@ -144,6 +144,7 @@ app.post("/create_new_project", upload.single('file'), async (req,res)=>{
 async function updateUserData(explanation, fileName, projectName, audioFilePath, projectID, pdfText, summary) {
     // Reference to the document
     const docRef = doc(db, "user_data", "1");
+    const imgNumber = Math.floor(Math.random() * 4);
 
     // New map (object) to add to the projects array
     const newProject = {
@@ -155,7 +156,8 @@ async function updateUserData(explanation, fileName, projectName, audioFilePath,
         audioFilePath: audioFilePath,
         pdfText: pdfText,
         notes: "",
-        summary: summary
+        summary: summary,
+        imgNumber: imgNumber
     };
 
     // Update the document
