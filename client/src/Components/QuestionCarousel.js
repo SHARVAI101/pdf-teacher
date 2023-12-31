@@ -33,6 +33,7 @@ function QuestionCarousel({ questions }) {
   return (
     <div className="mt-4 pb-10 rounded-lg items-center justify-center mb-4 px-8 bg-gradient-to-r from-blue-500 to-indigo-500">
       {/* <button className="p-4" onClick={goToPrevious}>{"<"}</button> */}
+      <span>{currentIndex+1}/{5}</span>
       <div className="w-full flex justify-center grid grid-cols-1">
         { currentIndex < 5 && 
           <div>

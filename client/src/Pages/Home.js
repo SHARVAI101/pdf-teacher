@@ -41,7 +41,7 @@ function Home() {
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-20">
           <div class="max-w-xl mx-auto text-center">
             <h1 class="text-4xl font-bold sm:text-6xl">
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-white">ExplainThis</span>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-white">ExplainIt</span>
             </h1>
             <p class="mt-5 text-base text-white sm:text-xl">Your AI-powered teacher</p>
 
