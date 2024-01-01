@@ -22,12 +22,12 @@ We built ExplainIt using React and TailwindCSS for the frontend, Node.js, and Fi
 
 ## Screenshots
 
-<img src="assets/Screenshots/1.png" style="height:600px"/>
-<img src="assets/Screenshots/2.png" style="height:600px"/>
-<img src="assets/Screenshots/3.png" style="height:600px"/>
-<img src="assets/Screenshots/4.png" style="height:600px"/>
-<img src="assets/Screenshots/5.png" style="height:600px"/>
-<img src="assets/Screenshots/6.png" style="height:600px"/>
+<img src="assets/Screenshots/1.png" style="width:100%"/>
+<img src="assets/Screenshots/2.png" style="width:100%"/>
+<img src="assets/Screenshots/3.png" style="width:100%"/>
+<img src="assets/Screenshots/4.png" style="width:100%"/>
+<img src="assets/Screenshots/5.png" style="width:100%"/>
+<img src="assets/Screenshots/6.png" style="width:100%"/>
 
 ## Challenges we ran into
 
