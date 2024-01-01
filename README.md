@@ -20,6 +20,15 @@ In our academic journey, like any other student, we have often received course m
 
 We built ExplainIt using React and TailwindCSS for the frontend, Node.js, and Firebase for the backend along with OpenAI's API integration. 
 
+## Screenshots
+
+<img src="assets/Screenshots/1.png" style="height:600px"/>
+<img src="assets/Screenshots/2.png" style="height:600px"/>
+<img src="assets/Screenshots/3.png" style="height:600px"/>
+<img src="assets/Screenshots/4.png" style="height:600px"/>
+<img src="assets/Screenshots/5.png" style="height:600px"/>
+<img src="assets/Screenshots/6.png" style="height:600px"/>
+
 ## Challenges we ran into
 
 - Formatting the OpenAIs API response into more structured responses
