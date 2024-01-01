@@ -1,4 +1,6 @@
-# ExplainIt
+<p align="center"><img src="assets/thumbnail.png" style="width:250px" /></p>
+
+<h2 align="center">ExplainIt</h2>
 
 ExplainIt is an AI-powered personal tutor. It's that friend who explains the entire test syllabus to you right before the exams but better. Just upload whatever PDF you wish to learn and ExplainIt explains it to you in an extremely simple fashion not just in a written format but also in audio! 
 
