@@ -20,6 +20,13 @@ In our academic journey, like any other student, we have often received course m
 
 We built ExplainIt using React and TailwindCSS for the frontend, Node.js, and Firebase for the backend along with OpenAI's API integration. 
 
+## How to run
+- Clone this repository using `git clone https://github.com/SHARVAI101/pdf-teacher.git`
+- Run `npm i` in both the client and server folders
+- Run `npm start` in the client folder
+- Run `node app` in the server folder
+- Your personal tutor should be running on localhost:3000
+
 ## Screenshots
 
 <img src="assets/Screenshots/1.png" style="width:100%"/>
