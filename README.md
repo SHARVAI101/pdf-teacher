@@ -1,7 +1,5 @@
 # ExplainIt
 
-## What it does
-
 ExplainIt is an AI-powered personal tutor. It's that friend who explains the entire test syllabus to you right before the exams but better. Just upload whatever PDF you wish to learn and ExplainIt explains it to you in an extremely simple fashion not just in a written format but also in audio! 
 
 It boasts features such as text-to-speech, turning content into a dynamic dialogue with your very own personal teacher which can be paused whenever and to whom you can ask questions not only by typing but also by speaking, creating a very engaging and accessible learning journey.
