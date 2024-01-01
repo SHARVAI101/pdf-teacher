@@ -2,7 +2,7 @@
 
 <h2 align="center">ExplainIt</h2>
 
-<p align="center"><img src="https://img.shields.io/badge/-Flutter-02569B?logo=Flutter&logoColor=white&style=plastic" /> <img src="https://img.shields.io/badge/-Firebase-0396DE?logo=Firebase&logoColor=FFCA28&style=plastic" /> <img src="https://img.shields.io/apm/l/vim-mode" /> <img src="https://img.shields.io/github/languages/code-size/SHARVAI101/pdf-teacher"/></p>
+<p align="center"><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" /> <img src="https://img.shields.io/badge/-Firebase-0396DE?logo=Firebase&logoColor=FFCA28&style=plastic" /> <img src="https://img.shields.io/github/languages/code-size/SHARVAI101/pdf-teacher"/></p>
 
 ExplainIt is an AI-powered personal tutor. It's that friend who explains the entire test syllabus to you right before the exams but better. Just upload whatever PDF you wish to learn and ExplainIt explains it to you in an extremely simple fashion not just in a written format but also in audio! 
 
