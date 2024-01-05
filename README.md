@@ -32,6 +32,7 @@ We built ExplainIt using React and TailwindCSS for the frontend, Node.js, and Fi
 - Clone this repository using `git clone https://github.com/SHARVAI101/pdf-teacher.git`
 - Run `npm i` in both the client and server folders
 - Run `npm start` in the client folder
+- Create a .env file in the server folder similar to the .env.example file and add all the required authentication values
 - Run `node app` in the server folder
 - Your personal tutor should be running on localhost:3000
 
