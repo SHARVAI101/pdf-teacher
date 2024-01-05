@@ -12,6 +12,12 @@ Taking an individualized learning approach, ExplainIt has a completely dynamic q
 
 In summary, ExplainIt can be considered to be a dynamic learning companion, making education engaging, accessible, and tailored to individual needs. 
 
+[![Demo video](assets/thumbnail.png)](https://youtu.be/T6lE6wPckXI)
+
+## Try it out
+
+[Try out the limited version](https://explain-it-client.vercel.app/)
+
 ## Inspiration
 
 In our academic journey, like any other student, we have often received course materials in the form of PDFs from professors. However, there were many instances where the instructors' explanations fell short or lacked clarity. This gap in traditional learning methods served as the catalyst for the creation of ExplainIt. Our motivation stems from the need to empower learners, especially in underprivileged communities to navigate educational content at their own pace, fostering a deeper understanding and clarity.
