@@ -12,7 +12,9 @@ Taking an individualized learning approach, ExplainIt has a completely dynamic q
 
 In summary, ExplainIt can be considered to be a dynamic learning companion, making education engaging, accessible, and tailored to individual needs. 
 
-[![Demo video](assets/thumbnail.png)](https://youtu.be/T6lE6wPckXI)
+## Watch the demo video
+
+[Watch the demo video](https://youtu.be/T6lE6wPckXI)
 
 ## Try it out
 
